@@ -1,0 +1,23 @@
+{
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-arrays": "^2.2.0",
+    "mocha": "^9.1.1"
+  },
+  "dependencies": {
+    "moo": "^0.5.1",
+    "nearley": "^2.20.1"
+  },
+  "name": "@tatatap/sowhat",
+  "version": "2.0.2",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "env NODE_ENV=test mocha --recursive --exit ./test/",
+    "compile": "./node_modules/.bin/nearleyc src/grammar.ne -o src/grammar.js"
+  },
+  "license": "MIT",
+  "description": "Anything goes, organizational and utility function notation parser."
+}
