@@ -8,8 +8,8 @@
     "moo": "^0.5.1",
     "nearley": "^2.20.1"
   },
-  "name": "@tatatap/sowhat",
-  "version": "2.0.2",
+  "name": "@tatatap-com/sowhat",
+  "version": "1.0.0",
   "main": "src/index.js",
   "directories": {
     "test": "test"
