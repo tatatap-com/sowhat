@@ -290,6 +290,17 @@ describe('SoWhat parser', async () => {
       expect(!!parser.results[0].done).to.equal(true);
     });
 
+
+    it('should register the done and the folder even with a trailing slash on the path', () => {
+      const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+
+      parser.feed('/foo/ DONE bar');
+      expect(parser.results.length).to.equal(1);
+      expect(parser.results[0].folder[0].text).to.equal('/foo');
+      expect(parser.results[0].body).to.equal('bar');
+      expect(!!parser.results[0].done).to.equal(true);
+    });
+
     it('should register the folder with no todo', () => {
       const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
 

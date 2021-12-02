@@ -28,7 +28,7 @@ module.exports = {
   DATETIME_PATTERN: /(?:\d{4})-?(?:1[0-2]|0[1-9])-?(?:3[01]|0[1-9]|[12][0-9])(?:(?:[\sT])?(?:2[0-3]|[01][0-9]):?(?:[0-5][0-9]):?(?:[0-5][0-9])?(?:\.[0-9]+)?Z?)?/,
 
   // NOTE this collects all folder segments (post process splits by / and filters the empties, in other words the lexer is not broken by malformed, but very likely 'folder' statements)
-  FOLDER_PATTERN: new RegExp('\/' + LABEL_PORTION),
+  FOLDER_PATTERN: new RegExp('\/' + LABEL_PORTION + '?'),
 
   REACTION_PATTERN: new RegExp('(?:' + LOVED + '|' + LIKED + '|' + DISLIKED + '|' + LAUGHED + '|' + EMPH + '|' + QUESTIONED + ')'),
 

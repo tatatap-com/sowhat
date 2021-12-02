@@ -53,7 +53,15 @@ Sowhat is meant to be used in conjunction with a storage engine to keep track of
 
 Of course, not all sowhat elements are necessary to produce a useful system. In-fact it started with only a single element, Folders.
 
+
 ## Usage
+
+### Installation
+
+```
+npm install @tatatap-com/sowhat
+```
+
 
 ### Parsing
 

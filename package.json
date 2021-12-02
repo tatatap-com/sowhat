@@ -9,7 +9,7 @@
     "nearley": "^2.20.1"
   },
   "name": "@tatatap-com/sowhat",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/index.js",
   "directories": {
     "test": "test"
