@@ -101,7 +101,7 @@ Any text will parse as a valid sowhat record. The elements listed below add mean
 * **[Dates](#dates)**: The date the record pertains to (see below for more information about why this is not implied via file create time or some other meta-data source)
 * **[Folders](#folders)**: Describes where to file the record
 * **[Todo/Done](#tododone)**: Indicates whether the record is something todo or something done
-* **[URLs](#urls)**: See the urlPattern for the exact Regex
+* **[URLs](#urls)**: See the [urlPattern](https://github.com/tatatap-com/sowhat/blob/master/src/urlPattern.js) for the exact Regex
 * **[Tags](#tags)**: Standard tagging organizational structure
 * **[Events](#events)**: Just like a tag, but utilizes the date element to indicate that _something_ happened at that time. In addition to marking a moment in time, events can include a continuation notation indicating the event spans a time range ending when a record dated in the future includes an _event close token_
 * **[Beans](#beans)**: Beans are meant to be counted, and so they must be, or they are not much use. They are like tags combined with a number used to increase or decrease the value of a symbol. 
@@ -174,7 +174,7 @@ The keywords can be capital or lowercase or a mix, it does not matter: `todo`, `
 
 URLs identified in the record are parsed into a list for further processing. They can be included anywhere in the record except within another element.
 
-The URL regex can be found here ()[] 
+The URL regex can be found [here](https://github.com/tatatap-com/sowhat/blob/master/src/urlPattern.js) 
 
 ### Tags
 
