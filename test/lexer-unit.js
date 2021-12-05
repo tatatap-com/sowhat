@@ -31,21 +31,21 @@ describe('sowhat lexer', async () => {
     it('should have a date', async () => {
 
       const tokens = getTokens('2021-01-01 foo');
-      expect(tokens[0].value).to.equal('2021-01-01');
+      expect(tokens[0].text).to.equal('2021-01-01');
       expect(tokens[0].type).to.equal('date');
     });
 
     it('should have a date and time', async () => {
       const tokens = getTokens('2021-01-01T10:00 foo');
 
-      expect(tokens[0].value).to.equal('2021-01-01T10:00');
+      expect(tokens[0].text).to.equal('2021-01-01T10:00');
       expect(tokens[0].type).to.equal('date');
     });
 
     it('should have a date and time and folder', async () => {
       const tokens = getTokens('2021-01-01T10:00 /foo');
 
-      expect(tokens[0].value).to.equal('2021-01-01T10:00');
+      expect(tokens[0].text).to.equal('2021-01-01T10:00');
       expect(tokens[0].type).to.equal('date');
 
       expect(tokens[2].value).to.equal('/foo');
@@ -56,7 +56,7 @@ describe('sowhat lexer', async () => {
     it('should have a date and time and folder and todo', async () => {
       const tokens = getTokens('2021-01-01T10:00 /foo todo');
 
-      expect(tokens[0].value).to.equal('2021-01-01T10:00');
+      expect(tokens[0].text).to.equal('2021-01-01T10:00');
       expect(tokens[0].type).to.equal('date');
 
       expect(tokens[2].value).to.equal('/foo');
@@ -69,7 +69,7 @@ describe('sowhat lexer', async () => {
     it('should have a date and time and todo', async () => {
       const tokens = getTokens('2021-01-01T10:00 todo');
 
-      expect(tokens[0].value).to.equal('2021-01-01T10:00');
+      expect(tokens[0].text).to.equal('2021-01-01T10:00');
       expect(tokens[0].type).to.equal('date');
 
       expect(tokens[2].value).to.equal('todo');
@@ -303,10 +303,19 @@ $$()`);
     it('should have a formula with a function with an arg with escaped quotes', async () => {
       const tokens = getTokens(`$$()(+ 1 (BEAN "\\"hello world\\""))`);
 
-
-
       const operators = ['+', 'BEAN'];
       const args = ['1', '\\"hello world\\"'];
+
+      expect(tokens.some(i => i.type === 'error')).to.equal(false);
+      expect(tokens.filter(i => i.type === 'operator').map(i => i.value)).to.equalTo(operators);
+      expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
+    });
+
+    it('should have a formula with a function with an arg with escaped quotes', async () => {
+      const tokens = getTokens(`$$()(foo - 1)`);
+
+      const operators = ['foo'];
+      const args = [null, '1'];
 
       expect(tokens.some(i => i.type === 'error')).to.equal(false);
       expect(tokens.filter(i => i.type === 'operator').map(i => i.value)).to.equalTo(operators);

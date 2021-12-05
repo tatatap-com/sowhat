@@ -46,7 +46,7 @@ const funcs = {
         } else if (PI_PATTERN.test(i.value)) {
           return Math.PI.toString();
         } else {
-        return i.value;
+          return i.value;
         }
       }) : [],
       text: tokens.reduce((acc, t) => acc += t.text, ''),
