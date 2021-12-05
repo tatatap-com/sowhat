@@ -300,6 +300,19 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
+    it('should have a formula with a function with an arg with escaped quotes', async () => {
+      const tokens = getTokens(`$$()(+ 1 (BEAN "\\"hello world\\""))`);
+
+
+
+      const operators = ['+', 'BEAN'];
+      const args = ['1', '\\"hello world\\"'];
+
+      expect(tokens.some(i => i.type === 'error')).to.equal(false);
+      expect(tokens.filter(i => i.type === 'operator').map(i => i.value)).to.equalTo(operators);
+      expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
+    });
+
     it('should have a named formula with a function in it', async () => {
       const tokens = getTokens('$$(foo) (+ 1 (BEAN bar))');
 
