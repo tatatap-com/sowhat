@@ -96,7 +96,18 @@ let lexer = moo.states({
     date: {
       match: DATETIME_PATTERN,
       next: 'date',
-      lineBreaks: false
+      lineBreaks: false,
+      value: t => {
+        try {
+          return (new Date(t)).toISOString()
+        } catch (err) {
+          return {
+            type: 'INVALID_DATE_FORMAT',
+            message: 'Not a valid date.',
+            text: t
+          }
+        }
+      }
     },
 
     reaction_open: { match: REACTION_PATTERN, next: 'reaction'}, // TODO: decide if this should go to main or push on to standard
