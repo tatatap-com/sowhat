@@ -562,42 +562,12 @@ describe('SoWhat parser', async () => {
     })
 
     it('should find a formula and the record text and body should be the same after parsing', () => {
-
-      /* const result = parser.parse(`/foo $$()(a b (c    d    (e f (g    h ) i) ) j  )   `)
-
-
-       * expect(result.text).to.equal(`/foo $$()(a b (c    d    (e f (g    h ) i) ) j  )   `);
-       */
-      const result = parser.parse(`/foo $$()(+ (+ 1 (- 2 1)) 3)   bar`)
-
-      expect(result.text).to.equal(`/foo $$()(+ (+ 1 (- 2 1)) 3)   bar`);
-
-      return 
-      /* const result = parser.parse(`/"Foo bar"/ $$("Med Len Formula")
-       *   (round
-	       (/
-       *       (+
-    	   ($ name)
-		     (sum
-    		 (op "a" - "b" "1")
-       *   (op "a" - "c" "2")
-       *   (op "a" - "d" "3")))
-         11))`)
-
-       * expect(result.text).to.equal(`/"Foo bar"/ $$("Med Len Formula")
-         (round
-	       (/
-         (+
-    	   ($ name)
-		     (sum
-    		 (op "a" - "b" "1")
-       *   (op "a" - "c" "2")
-       *   (op "a" - "d" "3")))
-         11))`) */
-
-      //console.log(JSON.stringify(result, null, '  '))
-
+      const result = parser.parse(`/foo $$()(a b (c    d    (e f (g    h ) i) ) j  )   `)
+      
+      expect(result.text).to.equal(`/foo $$()(a b (c    d    (e f (g    h ) i) ) j  )   `)
+      expect(result.body).to.equal(`$$()(a b (c    d    (e f (g    h ) i) ) j  )`)
     })
-  })
+
+})
 
 });

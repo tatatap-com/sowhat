@@ -24,20 +24,18 @@ const func = tokens => {
 
   let error
   let text = ''
-  let numTok = 0
+  let i = 0;
 
-  for (let i = 0; i < tokens.length; i++) {
+  for (i; i < tokens.length; i++) {
     const t = tokens[i]
 
     if (t.type === 'operator') {
-      numTok++
       res.text += t.text
       res.operator = t.value
     } else if (i !== 0 && t.type === 'lparen') {
 
       const {numTokens, token, err} = func(tokens.slice(i))
 
-      numTok += numTokens
       i += numTokens
 
       res.text += token.text
@@ -49,17 +47,17 @@ const func = tokens => {
       res.args.push(token)
 
     } else if (t.type === 'arg') {
-      numTok++
+
       res.text += t.text
       res.args.push(argVal(t))
     } else if (t.type === 'error') {
-      numTok++
+
       res.text += t.text
       res.error = true
       error = t
       break
     } else if (t.type === 'rparen') {
-      numTok++
+
       res.text += t.text
       break
     } else if (t.type === 'lparen') {
@@ -67,12 +65,12 @@ const func = tokens => {
 
       res.text += t.text
     } else {
-      numTok++
+
       res.text += t.text
     }
   }
 
-  return {numTokens: numTok, err: error, token: res}
+  return {numTokens: i, err: error, token: res}
 }
 
 const formula = tokens => {
@@ -110,7 +108,6 @@ const formula = tokens => {
 
   for (i; i < tokens.length; i++) {
     const t = tokens[i]
-    numTok++
 
     if (t.type === 'error') {
       res.error = true
@@ -120,7 +117,6 @@ const formula = tokens => {
 
       const {numTokens, token, err} = func(tokens.slice(i))
       i += numTokens
-      numTok += numTokens
 
       res.text += token.text
       if (err) {
@@ -136,7 +132,7 @@ const formula = tokens => {
     }
   }
 
-  return {token: res, numTokens: numTok, error}
+  return {token: res, numTokens: i, error}
 }
 
 const reaction = tokens => {
@@ -207,7 +203,7 @@ module.exports = function (input) {
     if (t.type === 'formula_open') {
       const {token, numTokens, error} = formula(tokens.slice(i))
 
-      i += numTokens - 1 // NOTE the -1 here accounts for the 
+      i += numTokens
       t = token
 
     } else if (t.type === 'reaction_open') {
