@@ -46,9 +46,9 @@ module.exports = {
 
   OPERATOR_PATTERN: /[\S]{1,42}/,
 
-  ARG_PATTERN: new RegExp('-|' + LABEL_PATTERN + '|' + NUMBER_PATTERN),
+  ARG_PATTERN: new RegExp(LABEL_PATTERN + '|-?' + NUMBER_PATTERN + '|-'),
 
-  NUMBER_PATTERN: new RegExp(NUMBER_PATTERN),
+  NUMBER_PATTERN: new RegExp('-?' + NUMBER_PATTERN),
   PI_PATTERN: /(?:\ud83e\udd67|[Pp][Ii])/,
 
   URL_PATTERN: require('./urlPattern'),

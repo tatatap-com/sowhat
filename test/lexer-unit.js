@@ -310,11 +310,22 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a formula with a function with an arg with escaped quotes', async () => {
+    it('should have a formula with a function with an arg with null value', async () => {
       const tokens = getTokens(`$$()(foo - 1)`);
 
       const operators = ['foo'];
       const args = [null, '1'];
+
+      expect(tokens.some(i => i.type === 'error')).to.equal(false);
+      expect(tokens.filter(i => i.type === 'operator').map(i => i.value)).to.equalTo(operators);
+      expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
+    });
+
+    it('should have a formula with a function with a null arg and a negative number', async () => {
+      const tokens = getTokens(`$$()(foo - 1 -1.23)`);
+
+      const operators = ['foo'];
+      const args = [null, '1', '-1.23'];
 
       expect(tokens.some(i => i.type === 'error')).to.equal(false);
       expect(tokens.filter(i => i.type === 'operator').map(i => i.value)).to.equalTo(operators);
