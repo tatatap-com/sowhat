@@ -5,18 +5,16 @@
     "mocha": "^9.1.1"
   },
   "dependencies": {
-    "moo": "^0.5.1",
-    "nearley": "^2.20.1"
+    "moo": "^0.5.1"
   },
   "name": "@tatatap-com/sowhat",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "main": "src/index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "env NODE_ENV=test mocha --recursive --exit ./test/",
-    "compile": "./node_modules/.bin/nearleyc src/grammar.ne -o src/grammar.js"
+    "test": "env NODE_ENV=test mocha --recursive --exit ./test/"
   },
   "license": "MIT",
   "description": "Anything goes, organizational and utility function notation parser."

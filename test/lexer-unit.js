@@ -12,7 +12,6 @@ const getTokens = (code) => {
 }
 
 describe('sowhat lexer', async () => {
-
   describe('Everything is valid', async () => {
     it('should have tokens', async () => {
       const tokens = getTokens('hello world');
