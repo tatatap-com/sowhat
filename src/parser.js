@@ -64,6 +64,7 @@ const func = tokens => {
       break
     } else if (t.type === 'lparen') {
       // NOTE this does not need to advance numTok because it is accounted for in the parent
+
       res.text += t.text
     } else {
       numTok++
@@ -93,13 +94,15 @@ const formula = tokens => {
   let numTok = 0
   let i = 0
 
-  while (tokens[i] && ['error', 'rparen'].indexOf(tokens[i].type) === -1) {
+  while (tokens[i] && ['error'].indexOf(tokens[i].type) === -1) {
     const t = tokens[i]
     numTok++
     res.text += t.text
 
     if (t.type === 'arg') {
       res.value.name = t.value
+    } else if (t.type === 'rparen') {
+      break
     }
 
     i++
@@ -119,7 +122,6 @@ const formula = tokens => {
       i += numTokens
       numTok += numTokens
 
-
       res.text += token.text
       if (err) {
         res.error = true
@@ -127,6 +129,8 @@ const formula = tokens => {
       }
       res.value.procedure = token
       break
+    } else if (t.type === 'rparen') {
+      
     } else {
       res.text += t.text
     }
@@ -203,7 +207,7 @@ module.exports = function (input) {
     if (t.type === 'formula_open') {
       const {token, numTokens, error} = formula(tokens.slice(i))
 
-      i += numTokens
+      i += numTokens - 1 // NOTE the -1 here accounts for the 
       t = token
 
     } else if (t.type === 'reaction_open') {
@@ -214,7 +218,7 @@ module.exports = function (input) {
         res.error.push(error)
       }
 
-      i += numTokens
+      i += numTokens - 1
       t = token
     }
 
