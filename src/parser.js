@@ -255,11 +255,11 @@ module.exports = function (input) {
     }
 
     if (chunk) {
-      res.chunks.push(tokenFilter(chunk))
+      res.chunks.push({...tokenFilter(chunk), type: chunk.type})
     }
 
     if (chunks[i]) {
-      res.chunks.push(tokenFilter(chunks[i]))
+      res.chunks.push({...tokenFilter(chunks[i]), type: chunk.type})
     }
   }
 
