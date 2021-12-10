@@ -259,7 +259,7 @@ module.exports = function (input) {
     }
 
     if (chunks[i]) {
-      res.chunks.push({...tokenFilter(chunks[i]), type: chunk.type})
+      res.chunks.push({...tokenFilter(chunks[i]), type: chunk[i].type})
     }
   }
 
