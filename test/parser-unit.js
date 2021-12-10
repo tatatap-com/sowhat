@@ -3,60 +3,59 @@ const chai = require('chai');
 const {expect} = chai;
 
 
-describe('SoWhat parser', async () => {
+describe('SoWhat parser', () => {
 
-  describe('Standard form', async () => {
-    it('should have words', async () => {
+  describe('Standard form', () => {
+    it('should have words', () => {
       const result = parser.parse('yeah baby.');
       expect(result.text).to.equal('yeah baby.');
     });
 
-    it('should have a tag', async () => {
-
+    it('should have a tag', () => {
       const result = parser.parse(`yeah baby #foo`);
       expect(result.tag[0].text).to.equal('#foo');
     });
 
-    it('should have a tag when tag follows folder', async () => {
+    it('should have a tag when tag follows folder', () => {
       const result = parser.parse('/yeah #foo');
       expect(result.tag[0].text).to.equal('#foo');
     });
 
-    it('should have 2 tags', async () => {
+    it('should have 2 tags', () => {
       const result = parser.parse('yeah baby #foo #bar.');
       expect(result.tag[0].text).to.equal('#foo');
       expect(result.tag[1].text).to.equal('#bar');
     });
 
-    it('should have events', async () => {
+    it('should have events', () => {
       const result = parser.parse('yeah baby !foo !bar.');
       expect(result.event[0].text).to.equal('!foo');
       expect(result.event[1].text).to.equal('!bar');
     });
 
-    it('should have events following folder', async () => {
+    it('should have events following folder', () => {
       const result = parser.parse('/yeah/baby !foo !bar.');
       expect(result.event[0].text).to.equal('!foo');
       expect(result.event[1].text).to.equal('!bar');
     });
 
-    it('should have an event when there are certain unicode characters as the symbol', async () => {
+    it('should have an event when there are certain unicode characters as the symbol', () => {
       const result = parser.parse('!❤ !☔ !💇 !🧙 !🧙 !🧙‍♀');
       expect(result.event.length).to.equal(6);
     });
 
-    it('should not have an event when there is an unwelcome character', async () => {
+    it('should not have an event when there is an unwelcome character', () => {
       const result = parser.parse('!! !. !? !/ !@ !# !% !^ !& !* !( !) !~ !` !< !> !: !; !\' !\ !{ !} ![ !] !| !+ != !- !_');
 
       expect(result.event.length).to.equal(0);
     });
 
-    it('should have a url', async () => {
+    it('should have a url', () => {
       const result = parser.parse('http://foo.com');
       expect(result.url[0].text).to.equal('http://foo.com');
     });
 
-    it('should have a url, tag, event', async () => {
+    it('should have a url, tag, event', () => {
       const result = parser.parse('http://foo.com !foo #bar');
       expect(result.url[0].text).to.equal('http://foo.com');
       expect(result.event[0].text).to.equal('!foo');
@@ -64,7 +63,64 @@ describe('SoWhat parser', async () => {
     });
   });
 
-  describe('Dated Record', async () => {
+
+  describe('Token Locations', () => {
+    it('should report the correct location of the tag token', () => {
+      const result = parser.parse('foo #bar baz')
+      const {col, offset} = result.tag[0]
+      const len = result.tag[0].text.length
+      expect(result.text.substring(offset, offset + len)).to.equal('#bar')
+    });
+
+    it('should report the correct location of the tag token with token variation and multiple lines', () => {
+      const result = parser.parse(`/foo todo
+    !bar
+
+ok                              #baz
+
+
+baz`)
+      const {col, offset} = result.tag[0]
+      const len = result.tag[0].text.length
+      expect(result.text.substring(offset, offset + len)).to.equal('#baz')
+    });
+
+
+    it('should report the correct location of the formula token with multiple lines', () => {
+      const result = parser.parse(`/foo $$("bar baz")
+
+(+ "qux qux" (- 1 2 3)) and more`)
+      const {col, offset} = result.formula[0]
+      const len = result.formula[0].text.length
+      expect(result.text.substring(offset, offset + len)).to.equal(`$$("bar baz")
+
+(+ "qux qux" (- 1 2 3))`)
+    });
+  })
+
+  describe('Chunks', () => {
+
+    it('should have 4 chunks', () => {
+      const result = parser.parse('/foo bar baz qux #quux a b c d   ');
+      expect(result.chunks.length).to.equal(4);
+      expect(result.chunks[0].text).to.equal('/foo');
+      expect(result.chunks[1].text).to.equal(' bar baz qux ');
+      expect(result.chunks[2].text).to.equal('#quux');
+      expect(result.chunks[3].text).to.equal(' a b c d   ');
+    });
+
+    it('should have 4 chunks with formula', () => {
+      const result = parser.parse('/foo $$()(+ 1 1)  aaaa bbb ccc ');
+      expect(result.chunks.length).to.equal(4);
+      expect(result.chunks[0].text).to.equal('/foo');
+      expect(result.chunks[1].text).to.equal(' ');
+      expect(result.chunks[2].text).to.equal('$$()(+ 1 1)');
+      expect(result.chunks[3].text).to.equal('  aaaa bbb ccc ');
+    });
+
+  })
+  
+  describe('Dated Record', () => {
     it('should have a date and record body', () => {
       const result = parser.parse('2020-01-20 foo bar #baz');
 
@@ -90,7 +146,7 @@ describe('SoWhat parser', async () => {
     });
   });
 
-  describe('Folder form', async () => {
+  describe('Folder form', () => {
     it('should have one seg folder and text', () => {
       const result = parser.parse('/foo bar #baz');
       expect(result.folder[0].text).to.equal('/foo');
@@ -563,7 +619,6 @@ describe('SoWhat parser', async () => {
 
     it('should find a formula and the record text and body should be the same after parsing', () => {
       const result = parser.parse(`/foo $$()(a b (c    d    (e f (g    h ) i) ) j  )   `)
-      
       expect(result.text).to.equal(`/foo $$()(a b (c    d    (e f (g    h ) i) ) j  )   `)
       expect(result.body).to.equal(`$$()(a b (c    d    (e f (g    h ) i) ) j  )`)
     })

@@ -61,11 +61,8 @@ const func = tokens => {
       res.text += t.text
       break
     } else if (t.type === 'lparen') {
-      // NOTE this does not need to advance numTok because it is accounted for in the parent
-
       res.text += t.text
     } else {
-
       res.text += t.text
     }
   }
@@ -89,12 +86,10 @@ const formula = tokens => {
     lineBreaks: 0,
     error: null
   }
-  let numTok = 0
   let i = 0
 
   while (tokens[i] && ['error'].indexOf(tokens[i].type) === -1) {
     const t = tokens[i]
-    numTok++
     res.text += t.text
 
     if (t.type === 'arg') {
@@ -114,7 +109,6 @@ const formula = tokens => {
       res.value.procedure = t.value
       break
     } else if (t.type === 'lparen') {
-
       const {numTokens, token, err} = func(tokens.slice(i))
       i += numTokens
 
@@ -126,7 +120,7 @@ const formula = tokens => {
       res.value.procedure = token
       break
     } else if (t.type === 'rparen') {
-      
+      continue
     } else {
       res.text += t.text
     }
@@ -176,6 +170,16 @@ const reaction = tokens => {
   return {token: res, error, numTokens}
 }
 
+const tokenFilter = t => ({
+  value: t.value,
+  text: t.text,
+  offset: t.offset,
+  line:t.line,
+  col: t.col,
+  lineBreaks: t.lineBreaks,
+  error: t.error || null
+})
+
 
 module.exports = function (input) {
   lexer.reset(input)
@@ -193,8 +197,11 @@ module.exports = function (input) {
     error: [],
     formula: [],
     text: '',
-    body: ''
+    body: '',
+    chunks: []
   }
+
+  const chunks = []
 
   for(let i=0; i < tokens.length; i++){
     let t = tokens[i]
@@ -220,32 +227,39 @@ module.exports = function (input) {
 
     res.text += t.text
 
+    chunks.push(t)
+
     if (!['date', 'folder', 'todo', 'done'].includes(t.type)) {
       res.body += t.text
     }
 
     if (t.type in res && Array.isArray(res[t.type])) {
       // Capture all standard tokens
-      res[t.type].push({
-        value: t.value,
-        text: t.text,
-        offset: t.offset,
-        line:t.line,
-        col: t.col,
-        lineBreaks: t.lineBreaks,
-        error: t.error || null
-      })
+      res[t.type].push(tokenFilter(t))
     } else if (t.type in res) {
       // Capturing all one-per-note tokens
-      res[t.type] = {
-        value: t.value,
-        text: t.text,
-        offset: t.offset,
-        line:t.line,
-        col: t.col,
-        lineBreaks: t.lineBreaks,
-        error: t.error || null
+      res[t.type] = tokenFilter(t)
+    }
+  }
+
+  for (let i = 0; i < chunks.length; i++) {
+    let chunk = null;
+    while(i < chunks.length && ['word', 'space'].indexOf(chunks[i].type) !== -1) {
+      if (chunk == null) {
+        chunk = chunks[i]
+      } else {
+        chunk.text += chunks[i].text
+        chunk.value += chunks[i].value
       }
+      i++
+    }
+
+    if (chunk) {
+      res.chunks.push(tokenFilter(chunk))
+    }
+
+    if (chunks[i]) {
+      res.chunks.push(tokenFilter(chunks[i]))
     }
   }
 

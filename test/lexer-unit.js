@@ -11,37 +11,37 @@ const getTokens = (code) => {
   return Array.from(lexer);
 }
 
-describe('sowhat lexer', async () => {
-  describe('Everything is valid', async () => {
-    it('should have tokens', async () => {
+describe('sowhat lexer', () => {
+  describe('Everything is valid', () => {
+    it('should have tokens', () => {
       const tokens = getTokens('hello world');
       expect(tokens.filter(t => t.type === 'word').length).to.equal(2);
       expect(tokens.length).to.equal(3);
     });
 
-    it('should have tag tokens', async () => {
+    it('should have tag tokens', () => {
       const tokens = getTokens('#hello #world');
       expect(tokens.filter(t => t.type === 'tag').length).to.equal(2);
       expect(tokens.length).to.equal(3);
     });
   });
 
-  describe('Dates', async () => {
-    it('should have a date', async () => {
+  describe('Dates', () => {
+    it('should have a date', () => {
 
       const tokens = getTokens('2021-01-01 foo');
       expect(tokens[0].text).to.equal('2021-01-01');
       expect(tokens[0].type).to.equal('date');
     });
 
-    it('should have a date and time', async () => {
+    it('should have a date and time', () => {
       const tokens = getTokens('2021-01-01T10:00 foo');
 
       expect(tokens[0].text).to.equal('2021-01-01T10:00');
       expect(tokens[0].type).to.equal('date');
     });
 
-    it('should have a date and time and folder', async () => {
+    it('should have a date and time and folder', () => {
       const tokens = getTokens('2021-01-01T10:00 /foo');
 
       expect(tokens[0].text).to.equal('2021-01-01T10:00');
@@ -52,7 +52,7 @@ describe('sowhat lexer', async () => {
     });
 
 
-    it('should have a date and time and folder and todo', async () => {
+    it('should have a date and time and folder and todo', () => {
       const tokens = getTokens('2021-01-01T10:00 /foo todo');
 
       expect(tokens[0].text).to.equal('2021-01-01T10:00');
@@ -65,7 +65,7 @@ describe('sowhat lexer', async () => {
       expect(tokens[4].type).to.equal('todo');
     });
 
-    it('should have a date and time and todo', async () => {
+    it('should have a date and time and todo', () => {
       const tokens = getTokens('2021-01-01T10:00 todo');
 
       expect(tokens[0].text).to.equal('2021-01-01T10:00');
@@ -76,14 +76,14 @@ describe('sowhat lexer', async () => {
     });
   });
 
-  describe('Folders', async () => {
-    it('should have folder with one segment', async () => {
+  describe('Folders', () => {
+    it('should have folder with one segment', () => {
       const tokens = getTokens('/foo bar');
       expect(tokens[0].value).to.equal('/foo');
       expect(tokens[0].type).to.equal('folder');
     });
 
-    it('should have folder with multiple segments', async () => {
+    it('should have folder with multiple segments', () => {
       const tokens = getTokens('/foo/bar/baz qux');
       expect(tokens[0].value).to.equal('/foo');
       expect(tokens[1].value).to.equal('/bar');
@@ -93,7 +93,7 @@ describe('sowhat lexer', async () => {
       expect(tokens[2].type).to.equal('folder');
     });
 
-    it('should have folder with quoted segments', async () => {
+    it('should have folder with quoted segments', () => {
       const tokens = getTokens('/foo/"bar Baz" qux');
       expect(tokens[0].value).to.equal('/foo');
       expect(tokens[1].value).to.equal('/bar Baz');
@@ -105,8 +105,8 @@ describe('sowhat lexer', async () => {
   });
 
 
-  describe('Beans', async () => {
-    it('should have a Bean token', async () => {
+  describe('Beans', () => {
+    it('should have a Bean token', () => {
       const tokens = getTokens('+foo');
       expect(tokens.filter(t => t.type === 'bean').length).to.equal(1);
       
@@ -114,7 +114,7 @@ describe('sowhat lexer', async () => {
     });
 
 
-    it('should have a Bean token', async () => {
+    it('should have a Bean token', () => {
       const tokens = getTokens('+f3oo:33');
       expect(tokens.filter(t => t.type === 'bean').length).to.equal(1);
       
@@ -123,14 +123,14 @@ describe('sowhat lexer', async () => {
   });
 
 
-  describe('Events', async () => {
-    it('should have an event token', async () => {
+  describe('Events', () => {
+    it('should have an event token', () => {
       const tokens = getTokens('!foo');
       expect(tokens.filter(t => t.type === 'event').length).to.equal(1);
       expect(tokens.length).to.equal(1);
     });
 
-    it('should have an event token with a range open component', async () => {
+    it('should have an event token with a range open component', () => {
       const tokens = getTokens('!foo...');
       expect(tokens[0].text).to.equal('!foo...');
 
@@ -144,7 +144,7 @@ describe('sowhat lexer', async () => {
     });
 
 
-    it('should have an event token with a range close component', async () => {
+    it('should have an event token with a range close component', () => {
       const tokens = getTokens('...foo bar baz');
       expect(tokens[0].text).to.equal('...foo');
 
@@ -158,7 +158,7 @@ describe('sowhat lexer', async () => {
     });
 
 
-    it('should have an event token with a range close component', async () => {
+    it('should have an event token with a range close component', () => {
       const tokens = getTokens('..."Foo Bar Baz"');
       expect(tokens[0].text).to.equal('..."Foo Bar Baz"');
 
@@ -175,8 +175,8 @@ describe('sowhat lexer', async () => {
 
   
 
-  describe('Token case', async () => {
-    it('should have a tag with quoted text and unquoted set to lower case', async () => {
+  describe('Token case', () => {
+    it('should have a tag with quoted text and unquoted set to lower case', () => {
       const tokens = getTokens('#"FOO bar" #BAZ');
       expect(tokens.filter(t => t.type === 'tag').length).to.equal(2);
 
@@ -184,7 +184,7 @@ describe('sowhat lexer', async () => {
       expect(tokens[2].value).to.equal('baz');
     });
 
-    it('should have tag tokens', async () => {
+    it('should have tag tokens', () => {
       const tokens = getTokens('/"FOO bar"/BAZ');
       expect(tokens[0].value).to.equal('/FOO bar');
       expect(tokens[1].value).to.equal('/baz');
@@ -192,16 +192,16 @@ describe('sowhat lexer', async () => {
   });
 
 
-  describe('Formulas', async () => {
+  describe('Formulas', () => {
     // formulas
-    it('should be a formula', async () => {
+    it('should be a formula', () => {
       const tokens = getTokens('$$()(+ 1 1)');
       expect(tokens.some(i => i.type === 'error')).to.equal(false);
       expect(tokens.some(t => t.type === 'formula_open')).to.equal(true);
       // expect(tokens.some(t => t.type === 'formula_close')).to.equal(true);
     });
 
-    it('should have a formula with standard tokens after', async () => {
+    it('should have a formula with standard tokens after', () => {
       const tokens = getTokens(`$$(name)(+ 1 2) 
 foo bar baz`);
 
@@ -210,7 +210,7 @@ foo bar baz`);
       expect(tokens.some(t => t.type === 'formula_open')).to.equal(true);
     });
 
-    it('should have a formula with standard tokens before', async () => {
+    it('should have a formula with standard tokens before', () => {
       const tokens = getTokens(`foo bar baz
 $$()`);
 
@@ -219,14 +219,14 @@ $$()`);
       expect(tokens.some(t => t.type === 'formula_open')).to.equal(true);
     });
 
-    it('should be a named formula', async () => {
+    it('should be a named formula', () => {
       const tokens = getTokens('$$(foo)(+ 1 1)');
       expect(tokens.some(i => i.type === 'error')).to.equal(false);
       expect(tokens.some(t => t.type === 'arg')).to.equal(true);
       expect(tokens.some(t => t.type === 'formula_open')).to.equal(true);
     });
 
-    it('should have a formula', async () => {
+    it('should have a formula', () => {
       lexer.reset('foo bar $$()(+ 1 1)');
       const tokens = []
       for (t of lexer) {
@@ -237,7 +237,7 @@ $$()`);
       expect(tokens.some(t => t.type === 'formula_open')).to.equal(true);
     });
 
-    it('should have a formula and not care about weird whitespace', async () => {
+    it('should have a formula and not care about weird whitespace', () => {
       lexer.reset('foo    bar $$()    ( +    1       1 )  ');
 
       const tokens = []
@@ -250,14 +250,14 @@ $$()`);
     });
 
 
-    it('should have three formulas', async () => {
+    it('should have three formulas', () => {
       const tokens = getTokens('foo bar $$ ()(+ 1 1)  $$()(+ 1 1) $$()(+ 1 1)  baz qux');
 
       expect(tokens.some(i => i.type === 'error')).to.equal(false);
       expect(tokens.filter(t => t.type === 'formula_open').length).to.equal(3);
     });
 
-    it('should have a formula with a function in it', async () => {
+    it('should have a formula with a function in it', () => {
       const tokens = getTokens('$$() (+ 1 (BEAN foo))')
       const operators = ['+', 'BEAN'];
       const args = ['1', 'foo'];
@@ -268,7 +268,7 @@ $$()`);
     });
 
 
-    it('should have a formula with all valid operators in it', async () => {
+    it('should have a formula with all valid operators in it', () => {
       const tokens = getTokens('$$() (+ 1 (BEAN foo) (BeaN- foo) (bean+ foo) ($ foo))')
       const operators = ['+', 'BEAN', 'BeaN-', 'bean+', '$'];
       const args = ['1', 'foo', 'foo', 'foo', 'foo'];
@@ -278,7 +278,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a formula with a function in it and three standard tokens after', async () => {
+    it('should have a formula with a function in it and three standard tokens after', () => {
       const tokens = getTokens('$$ () (+ 1 (BEAN foo)) bar baz qux')
       const operators = ['+', 'BEAN'];
       const args = ['1', 'foo'];
@@ -289,7 +289,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a formula with a function with multiple args', async () => {
+    it('should have a formula with a function with multiple args', () => {
       const tokens = getTokens('$$()(+ 1 (BEAN foo "2021-09-01" "/p/p/p"))');
       const operators = ['+', 'BEAN'];
       const args = ['1', 'foo', '2021-09-01', '/p/p/p'];
@@ -299,7 +299,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a formula with a function with an arg with escaped quotes', async () => {
+    it('should have a formula with a function with an arg with escaped quotes', () => {
       const tokens = getTokens(`$$()(+ 1 (BEAN "\\"hello world\\""))`);
 
       const operators = ['+', 'BEAN'];
@@ -310,7 +310,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a formula with a function with an arg with null value', async () => {
+    it('should have a formula with a function with an arg with null value', () => {
       const tokens = getTokens(`$$()(foo - 1)`);
 
       const operators = ['foo'];
@@ -321,7 +321,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a formula with a function with a null arg and a negative number', async () => {
+    it('should have a formula with a function with a null arg and a negative number', () => {
       const tokens = getTokens(`$$()(foo - 1 -1.23)`);
 
       const operators = ['foo'];
@@ -332,7 +332,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a named formula with a function in it', async () => {
+    it('should have a named formula with a function in it', () => {
       const tokens = getTokens('$$(foo) (+ 1 (BEAN bar))');
 
       const operators = ['+', 'BEAN'];
@@ -343,7 +343,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a formula with nested functions with multiple args in each', async () => {
+    it('should have a formula with nested functions with multiple args in each', () => {
       const tokens = getTokens('$$() (- 1 (+ (BEAN "bar") (BEAN baz) (BEAN qux)) (* 5 (- 10 10)))');
       const operators = ['-', '+', 'BEAN', 'BEAN', 'BEAN', '*', '-'];
       const args = ['1', 'bar', 'baz', 'qux', '5', '10', '10'];
@@ -353,7 +353,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should have a formula with nested functions and non function args in the last position of the function', async () => {
+    it('should have a formula with nested functions and non function args in the last position of the function', () => {
       const tokens = getTokens('$$() (- 1 (+ 2 3) 4) ');
       const operators = ['-', '+'];
       const args = ['1', '2', '3', '4'];
@@ -363,7 +363,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should produce an error because unsupported characters are present in the formula definition', async () => {
+    it('should produce an error because unsupported characters are present in the formula definition', () => {
       const tokens = getTokens('$$ (") (+ 0.0 1) foo')
       const operators = [];
       const args = [];
@@ -373,7 +373,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should produce an error because the formula has a symbol in the wrong place', async () => {
+    it('should produce an error because the formula has a symbol in the wrong place', () => {
       const tokens = getTokens('$$ (foo bar) (+ 1 (BEAN baz))')
       const operators = [];
       const args = ['foo'];
@@ -383,7 +383,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should produce an error because the formula has an incorrect sequence of characters starting in the operator position', async () => {
+    it('should produce an error because the formula has an incorrect sequence of characters starting in the operator position', () => {
       const tokens = getTokens('$$() (+ 1 ("F☔ " bar))')
       const operators = ['+', '"F☔'];
       const args = ['1']
@@ -394,7 +394,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should produce an error because unsupported characters are present in the arg', async () => {
+    it('should produce an error because unsupported characters are present in the arg', () => {
       const tokens = getTokens('$$( foo )(+ 0.0 ??) foo')
       const operators = ['+'];
       const args = ['foo', '0.0'];
@@ -404,7 +404,7 @@ $$()`);
       expect(tokens.filter(i => i.type === 'arg').map(i => i.value)).to.equalTo(args);
     });
 
-    it('should produce an error because there are too many args in the formula setup', async () => {
+    it('should produce an error because there are too many args in the formula setup', () => {
       const tokens = getTokens('$$(foo bar) (+ 1 1)')
       const operators = [];
       const args = ['foo'];
