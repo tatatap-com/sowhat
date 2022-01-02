@@ -4,20 +4,20 @@
  * ISO 8601-ish datetime pattern: https://www.regextester.com/94925
  */
 
-const moo = require("moo");
+const moo = require("moo")
 
-const LOVED = 'Loved “';
-const LIKED = 'Liked “';
-const DISLIKED = 'Disliked “';
+const LOVED = 'Loved “'
+const LIKED = 'Liked “'
+const DISLIKED = 'Disliked “'
 const LAUGHED = 'Laughed at “'
 const EMPH = 'Emphasized “'
-const QUESTIONED = 'Questioned “';
+const QUESTIONED = 'Questioned “'
 
-const helpers = require('./helpers');
+const helpers = require('./helpers')
 
-const LABEL_PATTERN = '(?:(?:"(?:[^"\\\\]*(?:\\\\.[^"\\\\]*)*?)")|(?:(?:[\u1000-\uffff]|[a-zA-Z]|[\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F])(?:[\u1000-\uffff]|[a-zA-Z0-9\-_]|[\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F]){0,18}))';
+const LABEL_PATTERN = '(?:(?:"(?:[^"\\\\]*(?:\\\\.[^"\\\\]*)*?)")|(?:(?:[\u1000-\uffff]|[a-zA-Z]|[\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F])(?:[\u1000-\uffff]|[a-zA-Z0-9\-_]|[\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F]){0,63}))'
 
-const NUMBER_PATTERN = '(?:(?:[0-9]*\\.?[0-9]+|[0-9]+\\.?[0-9]*)(?:[eE][+-]?[0-9]+)?)';
+const NUMBER_PATTERN = '(?:(?:[0-9]*\\.?[0-9]+|[0-9]+\\.?[0-9]*)(?:[eE][+-]?[0-9]+)?)'
 
 module.exports = {
   SYMBOL_PATTERN: /\S+/,
@@ -44,11 +44,16 @@ module.exports = {
 
   BEAN_PATTERN: new RegExp('[\+\-]' + LABEL_PATTERN + '(?::' + NUMBER_PATTERN + ')?'),
 
+  CELL_PATTERN: new RegExp('&' + LABEL_PATTERN + '(?::-?' + NUMBER_PATTERN + '(?:,[a-zA-Z][a-zA-Z\-]{0,11})?)?'),
+
+  MENTION_PATTERN: new RegExp('@' + LABEL_PATTERN ),
+
   OPERATOR_PATTERN: /[\S]{1,42}/,
 
   ARG_PATTERN: new RegExp(LABEL_PATTERN + '|-?' + NUMBER_PATTERN + '|-'),
 
   NUMBER_PATTERN: new RegExp('-?' + NUMBER_PATTERN),
+
   PI_PATTERN: /(?:\ud83e\udd67|[Pp][Ii])/,
 
   URL_PATTERN: require('./urlPattern'),
