@@ -9,6 +9,8 @@ const {
   FOLDER_PATTERN,
   REACTION_PATTERN,
   TAG_PATTERN,
+  MENTION_PATTERN,
+  CELL_PATTERN,
   EVENT_PATTERN,
   BEAN_PATTERN,
   URL_PATTERN,
@@ -25,6 +27,56 @@ const standard_tokens = {
       return t.substring(1).toLowerCase()
     }
   }},
+
+  mention: {match: MENTION_PATTERN, push: 'mention', value: t => {
+    if (QUOTED_NAME_PATTERN.test(t)) {
+      return t.substring(2, t.length - 1);
+    } else {
+      return t.substring(1).toLowerCase()
+    }
+  }},
+
+  cell: {match: CELL_PATTERN, push: 'cell', value: t => {
+    let symbol;
+    let value;
+
+    let rest = t.substring(1);
+    if (QUOTED_NAME_PATTERN.test(rest)) {
+      const quotedText = rest.match(QUOTED_NAME_PATTERN)[0]
+      symbol = quotedText.substring(1, quotedText.length - 1)
+
+      rest = rest.substring(quotedText.length)
+
+      const nI = rest.indexOf(':')
+
+      const uI = rest.indexOf(',')
+
+      value = nI === -1 ?
+              '0' :
+              (uI === -1 ? rest.substring(nI + 1) : rest.substring(nI + 1, uI)).toLowerCase()
+      unit = uI === -1 ? null : rest.substring(uI + 1)
+
+    } else {
+      const nI = rest.indexOf(':')
+
+      symbol = (nI === -1 ? rest.substring(0) : rest.substring(0, nI)).toLowerCase()
+
+      const uI = rest.indexOf(',')
+
+      value = nI === -1 ?
+              '1' :
+              (uI === -1 ? rest.substring(nI + 1) : rest.substring(nI + 1, uI)).toLowerCase()
+      unit = uI === -1 ? null : rest.substring(uI + 1)
+
+    }
+
+    return {
+      value,
+      symbol,
+      unit
+    }
+  }},
+
   event: {match: EVENT_PATTERN, push: 'event', value: t => {
     const isOpenRange = /(?:…|[\.]{3})$/.test(t);
     const isCloseRange = /^(?:…|[\.]{3})/.test(t);
@@ -62,8 +114,7 @@ const standard_tokens = {
     } else {
       const nI = rest.search(/:/);
       symbol = (nI === -1 ? rest.substring(0) : rest.substring(0, nI)).toLowerCase();
-      value = rest.substring(nI + 1);
-      value = nI === -1 ? '1' : value;
+      value = nI === -1 ? '1' : rest.substring(nI + 1)
     }
 
     return {
@@ -197,6 +248,26 @@ let lexer = moo.states({
     error: {match: SYMBOL_PATTERN, error: true, next: 'standard', value: (t) => {
       return {
         type: 'INVALID_TAG_FORMAT',
+        text: t
+      }
+    }}
+  },
+
+  cell: {
+    space: {match: WS_PATTERN, lineBreaks: true, next: 'standard'},
+    error: {match: SYMBOL_PATTERN, error: true, next: 'standard', value: (t) => {
+      return {
+        type: 'INVALID_CELL_FORMAT',
+        text: t
+      }
+    }}
+  },
+
+  mention: {
+    space: {match: WS_PATTERN, lineBreaks: true, next: 'standard'},
+    error: {match: SYMBOL_PATTERN, error: true, next: 'standard', value: (t) => {
+      return {
+        type: 'INVALID_MENTION_FORMAT',
         text: t
       }
     }}

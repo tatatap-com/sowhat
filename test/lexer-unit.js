@@ -24,7 +24,21 @@ describe('sowhat lexer', () => {
       expect(tokens.filter(t => t.type === 'tag').length).to.equal(2);
       expect(tokens.length).to.equal(3);
     });
-  });
+
+    it('should have a mention token', () => {
+      let tokens = getTokens('@J');
+      expect(tokens.filter(t => t.type === 'mention').length).to.equal(1)
+
+      expect(tokens[0].value).to.equal('j')
+      expect(tokens.length).to.equal(1)
+
+      tokens = getTokens('@"J"');
+      expect(tokens.filter(t => t.type === 'mention').length).to.equal(1)
+
+      expect(tokens[0].value).to.equal('J')
+      expect(tokens.length).to.equal(1)
+    })
+  })
 
   describe('Dates', () => {
     it('should have a date', () => {
@@ -117,8 +131,36 @@ describe('sowhat lexer', () => {
     it('should have a Bean token', () => {
       const tokens = getTokens('+f3oo:33');
       expect(tokens.filter(t => t.type === 'bean').length).to.equal(1);
-      
       expect(tokens[0].value.value).to.equal('33');
+    });
+  });
+
+  describe('Cells', () => {
+    it('should have a Cell token', () => {
+      const tokens = getTokens('&foo');
+      expect(tokens.filter(t => t.type === 'cell').length).to.equal(1);
+      expect(tokens[0].value.value).to.equal('1');
+    });
+
+
+    it('should have a Cell token', () => {
+      const tokens = getTokens('&foo:3.3,g');
+      expect(tokens.filter(t => t.type === 'cell').length).to.equal(1);
+      expect(tokens[0].value).to.eql({
+        value: '3.3',
+        symbol: 'foo',
+        unit: 'g'
+      });
+    });
+
+    it('should have a Cell token with a negative value', () => {
+      const tokens = getTokens('&foo:-3.3,g');
+      expect(tokens.filter(t => t.type === 'cell').length).to.equal(1);
+      expect(tokens[0].value).to.eql({
+        value: '-3.3',
+        symbol: 'foo',
+        unit: 'g'
+      });
     });
   });
 
