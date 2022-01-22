@@ -19,11 +19,17 @@ const LABEL_PATTERN = '(?:(?:"(?:[^"\\\\]*(?:\\\\.[^"\\\\]*)*?)")|(?:(?:[\u1000-
 
 const NUMBER_PATTERN = '(?:(?:[0-9]*\\.?[0-9]+|[0-9]+\\.?[0-9]*)(?:[eE][+-]?[0-9]+)?)'
 
+const LIMITED_ASCII_LABEL_PATTERN = '[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*'
+
 module.exports = {
   SYMBOL_PATTERN: /\S+/,
   WS_PATTERN: /\s+/,
 
   QUOTED_NAME_PATTERN: /(?:"(?:[^"\\]|\\.)*")/,
+
+  PIN_PATTERN: /\*[0-9]{0,3}/,
+
+  PULL_QUOTE_PATTERN: /(?:'{3}[\S\s]*'{3}|"{3}[\S\s]*"{3}|“{3}[\S\s]*”{3})/,
 
   DATETIME_PATTERN: /(?:\d{4})-?(?:1[0-2]|0[1-9])-?(?:3[01]|0[1-9]|[12][0-9])(?:(?:[\sT])?(?:2[0-3]|[01][0-9]):?(?:[0-5][0-9]):?(?:[0-5][0-9])?(?:\.[0-9]+)?Z?)?/,
 
@@ -46,7 +52,7 @@ module.exports = {
 
   CELL_PATTERN: new RegExp('&' + LABEL_PATTERN + '(?::-?' + NUMBER_PATTERN + '(?:,[a-zA-Z][a-zA-Z\-]{0,11})?)?'),
 
-  MENTION_PATTERN: new RegExp('@' + LABEL_PATTERN ),
+  MENTION_PATTERN: new RegExp('@' + LIMITED_ASCII_LABEL_PATTERN ),
 
   OPERATOR_PATTERN: /[\S]{1,42}/,
 

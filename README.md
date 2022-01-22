@@ -30,13 +30,16 @@ $$("Cash After Shopping")
 * [Integration](#integration)
 * [Usage](#usage)
 * [Elements](#elements)
+  * **[Pins](#pins)**
   * **[Dates](#dates)**
   * **[Folders](#folders)**
   * **[Todo/Done](#tododone)**
   * **[URLs](#urls)**
   * **[Tags](#tags)**
+  * **[Mentions](#mentions)**
   * **[Events](#events)**
   * **[Beans](#beans)**
+  * **[Cells](#cells)**
   * **[Formulas](#formulas)**
 * [Examples](#examples)
 
@@ -98,13 +101,16 @@ npm run compile
 
 Any text will parse as a valid sowhat record. The elements listed below add meaning and values to the record:
 
+* **[Pins](#pins)**: Pins provide an additional sequence to sort Records
 * **[Dates](#dates)**: The date the record pertains to (see below for more information about why this is not implied via file create time or some other meta-data source)
 * **[Folders](#folders)**: Describes where to file the record
 * **[Todo/Done](#tododone)**: Indicates whether the record is something todo or something done
 * **[URLs](#urls)**: See the [urlPattern](https://github.com/tatatap-com/sowhat/blob/master/src/urlPattern.js) for the exact Regex
 * **[Tags](#tags)**: Standard tagging organizational structure
+* **[Mentions](#mentions)**: Mentions allow tagging of a handle
 * **[Events](#events)**: Just like a tag, but utilizes the date element to indicate that _something_ happened at that time. In addition to marking a moment in time, events can include a continuation notation indicating the event spans a time range ending when a record dated in the future includes an _event close token_
 * **[Beans](#beans)**: Beans are meant to be counted, and so they must be, or they are not much use. They are like tags combined with a number used to increase or decrease the value of a symbol. 
+* **[Cells](#cells)**: Cells are very similar to beans, but have slightly better syntactic ergonomics and semantically they work better with data other than cashflow-like things
 * **[Formulas](#formulas)**: Lisp-style equations that are able to reference the value of *Beans* and other *Formulas*
 * Words: words wonderful words, whatever words you like.
 
@@ -137,6 +143,25 @@ Folders, Tags, Events and Beans all include a Label portion. The regex for this 
 ```
 
 It matches quoted text or non-whitespace text limited to the character sequence: `(([\u1000-\uffff]|[a-zA-Z]|[\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F])([\u1000-\uffff]|[a-zA-Z0-9\-_]|[\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F]){0,18})` 
+
+### Pins
+
+An optional flag to add to the very beginning of a record, `*1*`. The purpose of a Pin is to give the system a means to sort records with a sequence value other than Date.
+
+The syntax of a Pin is an asterisk followed by 0-3 integers, giving 1000 possible pin positions. Must be pecified as the first element in a record.
+
+```
+*0
+```
+
+```
+*999
+```
+
+```
+*420
+```
+
 
 ### Dates
 
@@ -179,6 +204,16 @@ The URL regex can be found [here](https://github.com/tatatap-com/sowhat/blob/mas
 ### Tags
 
 A `#` character followed by the *label pattern* regex. Full tag regex:
+
+### Mentions
+
+A `@` character followed by the a limited ASCII label regex. Full mention regex:
+
+```
+@[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*
+```
+
+The idea here is pretty simple -- provide a way to highlight and refer to handles mentioned in the record.
 
 ### Events
 
@@ -223,11 +258,24 @@ To decrease a Bean value use a `-` sign
 -cash:42
 ```
 
-The value is any number that matches the following regex:
+The value is any number that matches the following regex (NOTE: it must be a positive number):
 
 ```
 /([0-9]*\\.?[0-9]+|[0-9]+\\.?[0-9]*)([eE][+-]?[0-9]+)?/
 ```
+
+### Cells
+
+Cells will probably replace Beans at some point. They are very similar, but the syntax is a bit more user-friendly.
+
+Syntax is:
+
+```
+&<Label><:<Number>>?
+```
+
+The number can be positive or negative, unlike Beans.
+
 
 ### Formulas
 

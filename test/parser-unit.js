@@ -146,6 +146,26 @@ baz`)
     });
   });
 
+  describe('Pinned Record', () => {
+    it('should have a pin and record body', () => {
+      const result = parser.parse('*1 foo bar #baz');
+
+      expect(result.pin.text).to.equal('*1');
+      expect(result.tag[0].text).to.equal('#baz');
+      expect(result.body).to.equal('foo bar #baz');
+    });
+
+    it('should have a pin, date, folder and record body', () => {
+      const result = parser.parse('*1 2022-01-22 /foo bar #baz');
+
+      expect(result.pin.text).to.equal('*1');
+      expect(result.date.text).to.equal('2022-01-22');
+      expect(result.folder[0].text).to.equal('/foo');
+      expect(result.tag[0].text).to.equal('#baz');
+      expect(result.body).to.equal('bar #baz');
+    });
+  });
+
   describe('Folder form', () => {
     it('should have one seg folder and text', () => {
       const result = parser.parse('/foo bar #baz');

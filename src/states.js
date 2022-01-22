@@ -15,6 +15,7 @@ const {
   BEAN_PATTERN,
   URL_PATTERN,
   FORMULA_OPEN_PATTERN,
+  PIN_PATTERN,
   TODO_DONE_KW,
   QUOTED_NAME_PATTERN
 } = require('./constants');
@@ -29,11 +30,7 @@ const standard_tokens = {
   }},
 
   mention: {match: MENTION_PATTERN, push: 'mention', value: t => {
-    if (QUOTED_NAME_PATTERN.test(t)) {
-      return t.substring(2, t.length - 1);
-    } else {
-      return t.substring(1).toLowerCase()
-    }
+    return t.substring(1).toLowerCase()
   }},
 
   cell: {match: CELL_PATTERN, push: 'cell', value: t => {
@@ -136,13 +133,14 @@ const standard_tokens = {
 
 let lexer = moo.states({
   main: {
-    folder: {  match: FOLDER_PATTERN, next: 'folder', value: t => {
-      if (QUOTED_NAME_PATTERN.test(t)) {
-        return '/' + t.substring(2, t.length - 1);
-      } else {
-        return t.toLowerCase()
+    pin: {
+      match: PIN_PATTERN,
+      next: 'pin',
+      lineBreaks: false,
+      value: t => {
+        return t.substring(1)
       }
-    }},
+    },
 
     date: {
       match: DATETIME_PATTERN,
@@ -161,6 +159,16 @@ let lexer = moo.states({
       }
     },
 
+    folder: {  match: FOLDER_PATTERN, next: 'folder', value: t => {
+      if (QUOTED_NAME_PATTERN.test(t)) {
+        return '/' + t.substring(2, t.length - 1);
+      } else {
+        return t.toLowerCase()
+      }
+    }},
+
+
+
     reaction_open: { match: REACTION_PATTERN, next: 'reaction'}, // TODO: decide if this should go to main or push on to standard
     ...standard_tokens,
 
@@ -177,6 +185,58 @@ let lexer = moo.states({
   standard: {
     space: { match: WS_PATTERN, lineBreaks: true },
     ...standard_tokens
+  },
+
+
+  pin: {
+    space: { match: WS_PATTERN, lineBreaks: true },
+
+    date: {
+      match: DATETIME_PATTERN,
+      next: 'date',
+      lineBreaks: false,
+      value: t => {
+        try {
+          return (new Date(t)).toISOString()
+        } catch (err) {
+          return {
+            type: 'INVALID_DATE_FORMAT',
+            message: 'Not a valid date.',
+            text: t
+          }
+        }
+      }
+    },
+
+    folder: {
+      match: FOLDER_PATTERN,
+      next: 'folder',
+      value: t => {
+        if (QUOTED_NAME_PATTERN.test(t)) {
+          return '/' + t.substring(2, t.length - 1);
+        } else {
+          return t.toLowerCase()
+        }
+      },
+
+      ...standard_tokens,
+
+      word: {
+        type: TODO_DONE_KW,
+        match: SYMBOL_PATTERN,
+        next: 'standard',
+        lineBreaks: true
+      }
+    },
+
+    ...standard_tokens,
+
+    word: {
+      type: TODO_DONE_KW,
+      match: SYMBOL_PATTERN,
+      next: 'standard',
+      lineBreaks: true
+    }
   },
 
   date: {

@@ -185,6 +185,7 @@ module.exports = function (input) {
   lexer.reset(input)
   const tokens = Array.from(lexer)
   const res = {
+    pin: null,
     date: null,
     reaction: null,
     folder: [],
@@ -231,7 +232,7 @@ module.exports = function (input) {
 
     chunks.push(t)
 
-    if (!['date', 'folder', 'todo', 'done'].includes(t.type)) {
+    if (!['date', 'folder', 'todo', 'done', 'pin'].includes(t.type)) {
       res.body += t.text
     }
 

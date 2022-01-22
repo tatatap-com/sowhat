@@ -28,21 +28,87 @@ describe('sowhat lexer', () => {
     it('should have a mention token', () => {
       let tokens = getTokens('@J');
       expect(tokens.filter(t => t.type === 'mention').length).to.equal(1)
-
       expect(tokens[0].value).to.equal('j')
       expect(tokens.length).to.equal(1)
 
-      tokens = getTokens('@"J"');
+      tokens = getTokens('@J-');
       expect(tokens.filter(t => t.type === 'mention').length).to.equal(1)
+      expect(tokens[0].value).to.equal('j')
+      expect(tokens.length).to.equal(2)
 
-      expect(tokens[0].value).to.equal('J')
+      tokens = getTokens('@J--');
+      expect(tokens.filter(t => t.type === 'mention').length).to.equal(1)
+      expect(tokens[0].value).to.equal('j')
+      expect(tokens.length).to.equal(2)
+
+      tokens = getTokens('@J-j-j');
+      expect(tokens.filter(t => t.type === 'mention').length).to.equal(1)
+      expect(tokens[0].value).to.equal('j-j-j')
       expect(tokens.length).to.equal(1)
     })
   })
 
+
+  describe('Pin', () => {
+    it('should have a pin', () => {
+      const tokens = getTokens('*0');
+      expect(tokens[0].text).to.equal('*0');
+      expect(tokens[0].value).to.equal('0');
+      expect(tokens[0].type).to.equal('pin');
+    });
+
+    it('should not have a pin', () => {
+      const tokens = getTokens('foo *0');
+      expect(tokens[2].text).to.equal('*0');
+      expect(tokens[2].type).to.equal('word');
+    });
+
+    it('should have a pin and date and time', () => {
+      const tokens = getTokens('*999 2021-01-01T10:00 foo');
+
+      expect(tokens[0].text).to.equal('*999');
+      expect(tokens[0].value).to.equal('999');
+      expect(tokens[0].type).to.equal('pin');
+
+      expect(tokens[2].text).to.equal('2021-01-01T10:00');
+      expect(tokens[2].type).to.equal('date');
+    });
+
+    it('should have a date and time and folder', () => {
+      const tokens = getTokens('*999 2021-01-01T10:00 /foo');
+
+      expect(tokens[0].text).to.equal('*999');
+      expect(tokens[0].value).to.equal('999');
+      expect(tokens[0].type).to.equal('pin');
+
+      expect(tokens[2].text).to.equal('2021-01-01T10:00');
+      expect(tokens[2].type).to.equal('date');
+
+      expect(tokens[4].value).to.equal('/foo');
+      expect(tokens[4].type).to.equal('folder');
+    });
+
+
+    it('should have a date and time and folder and todo', () => {
+      const tokens = getTokens('*999 2021-01-01T10:00 /foo todo');
+
+      expect(tokens[0].text).to.equal('*999');
+      expect(tokens[0].value).to.equal('999');
+      expect(tokens[0].type).to.equal('pin');
+
+      expect(tokens[2].text).to.equal('2021-01-01T10:00');
+      expect(tokens[2].type).to.equal('date');
+
+      expect(tokens[4].value).to.equal('/foo');
+      expect(tokens[4].type).to.equal('folder');
+
+      expect(tokens[6].value).to.equal('todo');
+      expect(tokens[6].type).to.equal('todo');
+    });
+  });
+
   describe('Dates', () => {
     it('should have a date', () => {
-
       const tokens = getTokens('2021-01-01 foo');
       expect(tokens[0].text).to.equal('2021-01-01');
       expect(tokens[0].type).to.equal('date');
