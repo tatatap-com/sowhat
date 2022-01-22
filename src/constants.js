@@ -19,7 +19,7 @@ const LABEL_PATTERN = '(?:(?:"(?:[^"\\\\]*(?:\\\\.[^"\\\\]*)*?)")|(?:(?:[\u1000-
 
 const NUMBER_PATTERN = '(?:(?:[0-9]*\\.?[0-9]+|[0-9]+\\.?[0-9]*)(?:[eE][+-]?[0-9]+)?)'
 
-const LIMITED_ANSI_LABEL_PATTERN = '[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*'
+const LIMITED_ASCII_LABEL_PATTERN = '[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*'
 
 module.exports = {
   SYMBOL_PATTERN: /\S+/,
