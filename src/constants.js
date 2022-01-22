@@ -52,7 +52,7 @@ module.exports = {
 
   CELL_PATTERN: new RegExp('&' + LABEL_PATTERN + '(?::-?' + NUMBER_PATTERN + '(?:,[a-zA-Z][a-zA-Z\-]{0,11})?)?'),
 
-  MENTION_PATTERN: new RegExp('@' + LIMITED_ANSI_LABEL_PATTERN ),
+  MENTION_PATTERN: new RegExp('@' + LIMITED_ASCII_LABEL_PATTERN ),
 
   OPERATOR_PATTERN: /[\S]{1,42}/,
 
