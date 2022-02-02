@@ -57,6 +57,13 @@ describe('sowhat lexer', () => {
       expect(tokens[0].type).to.equal('pin');
     });
 
+    it('should have a pin without a number', () => {
+      const tokens = getTokens('* foo');
+      expect(tokens[0].text).to.equal('*');
+      expect(tokens[0].value).to.equal('0');
+      expect(tokens[0].type).to.equal('pin');
+    });
+
     it('should not have a pin', () => {
       const tokens = getTokens('foo *0');
       expect(tokens[2].text).to.equal('*0');

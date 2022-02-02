@@ -138,7 +138,8 @@ let lexer = moo.states({
       next: 'pin',
       lineBreaks: false,
       value: t => {
-        return t.substring(1)
+        const seq = t.substring(1)
+        return seq ? seq : '0'
       }
     },
 
