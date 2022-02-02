@@ -146,9 +146,13 @@ It matches quoted text or non-whitespace text limited to the character sequence:
 
 ### Pins
 
-An optional flag to add to the very beginning of a record, `*1*`. The purpose of a Pin is to give the system a means to sort records with a sequence value other than Date.
+An optional flag to add to the very beginning of a record, `*1`. The purpose of a Pin is to give the system a means to sort records with a sequence value other than Date.
 
 The syntax of a Pin is an asterisk followed by 0-3 integers, giving 1000 possible pin positions. Must be pecified as the first element in a record.
+
+```
+*
+```
 
 ```
 *0
