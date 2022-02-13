@@ -1,9 +1,14 @@
-const lexer = require('./states')
-const parser = require('./parser')
+import lexer from './states.js'
+import parser from './parser.js'
 
-exports.parse = parser
-
-exports.tokenize = function (input) {
+export const tokenize = function (input) {
   lexer.reset(input)
   return Array.from(lexer)
 }
+
+export const parse = parser
+
+export default {
+  parse, tokenize
+}
+

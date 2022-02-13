@@ -1,7 +1,7 @@
-const parser = require('../src');
-const chai = require('chai');
-const {expect} = chai;
+import parser from '../src/index.js'
+import chai from 'chai'
 
+const {expect} = chai;
 
 describe('SoWhat parser', () => {
 

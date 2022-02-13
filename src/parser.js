@@ -1,5 +1,5 @@
-const lexer = require('./states')
-const {PI_PATTERN} = require('./constants')
+import lexer from './states.js'
+import {PI_PATTERN} from './constants.js'
 
 const argVal = token => {
   if (PI_PATTERN.test(token.value)) {
@@ -181,7 +181,7 @@ const tokenFilter = t => ({
 })
 
 
-module.exports = function (input) {
+export default function (input) {
   lexer.reset(input)
   const tokens = Array.from(lexer)
   const res = {
