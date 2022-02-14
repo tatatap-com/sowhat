@@ -1,16 +1,13 @@
 import chai from 'chai'
 import assertArrays from 'chai-arrays'
 
-import lexer from '../src/states.js'
+import {tokenize} from '../src/index.js'
 
 const {expect} = chai
 
 chai.use(assertArrays)
 
-const getTokens = (code) => {
-  lexer.reset(code)
-  return Array.from(lexer)
-}
+const getTokens = tokenize
 
 describe('sowhat lexer', () => {
   describe('Everything is valid', () => {
