@@ -1,8 +1,8 @@
-const moo = require("moo");
+import moo from 'moo'
 
-const formulaStateFactory = require('./formula-states')
+import formulaStateFactory from './formula-states.js'
 
-const {
+import {
   SYMBOL_PATTERN,
   WS_PATTERN,
   DATETIME_PATTERN,
@@ -18,7 +18,7 @@ const {
   PIN_PATTERN,
   TODO_DONE_KW,
   QUOTED_NAME_PATTERN
-} = require('./constants');
+} from './constants.js'
 
 const standard_tokens = {
   tag: {match: TAG_PATTERN, push: 'tag', value: t => {
@@ -34,8 +34,9 @@ const standard_tokens = {
   }},
 
   cell: {match: CELL_PATTERN, push: 'cell', value: t => {
-    let symbol;
-    let value;
+    let symbol
+    let value
+    let unit
 
     let rest = t.substring(1);
     if (QUOTED_NAME_PATTERN.test(rest)) {
@@ -131,7 +132,7 @@ const standard_tokens = {
   },
 }
 
-let lexer = moo.states({
+export default moo.states({
   main: {
     pin: {
       match: PIN_PATTERN,
@@ -366,6 +367,6 @@ let lexer = moo.states({
   },
 
   ...formulaStateFactory('', 'standard'),
-});
+})
 
-module.exports = lexer;
+

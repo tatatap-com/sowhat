@@ -1,4 +1,4 @@
-exports.casePermutations = (input) => {
+export const casePermutations = (input) => {
   // From https://stackoverflow.com/questions/27992204/find-all-lowercase-and-uppercase-combinations-of-a-string-in-javascript
   const letters = input.split("");
   const permCount = 1 << input.length;
@@ -17,3 +17,4 @@ exports.casePermutations = (input) => {
   return perms;
 }
 
+export default {casePermutations}

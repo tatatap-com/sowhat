@@ -1,14 +1,13 @@
-const {
+import {
   SYMBOL_PATTERN,
   WS_PATTERN,
   OPERATOR_PATTERN,
   ARG_PATTERN,
-  FORMULA_CLOSE_PATTERN,
   QUOTED_NAME_PATTERN,
   LPAREN,
   RPAREN
 
-} = require('./constants');
+}  from './constants.js'
 
 const argValue = t => {
   if (QUOTED_NAME_PATTERN.test(t)) {
@@ -18,9 +17,9 @@ const argValue = t => {
   } else {
     return t;
   }
-};
+}
 
-module.exports = function (prefix, fallback = 'standard') {
+export default function (prefix, fallback = 'standard') {
   const prepend = prefix ? prefix + '_' : ''
 
   return {
