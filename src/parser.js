@@ -1,6 +1,69 @@
 import lexer from './states.js'
 import {PI_PATTERN} from './constants.js'
 
+const link = tokens => {
+  let error
+
+  let res = {
+    type: 'link',
+    value: {
+      title: null,
+      href: null,
+      'img-src': null,
+      'img-title': null,
+      error: null
+    },
+    text: '',
+    offset: tokens[0].offset,
+    line: tokens[0].line,
+    col: tokens[0].col,
+    lineBreaks: 0,
+    error: null
+  }
+
+  let i = 0
+  let needsMatch = false
+  let matches = 0
+  const args = []
+
+  const types = []
+
+  // while no error and no tokens other than link tokens
+  while (tokens[i] && ['error'].indexOf(tokens[i].type) === -1 && matches < 2) {
+    const t = tokens[i]
+
+    if (!needsMatch && t.type === 'lparen') {
+      needsMatch = true
+    } else if (needsMatch && t.type === 'rparen') {
+      needsMatch = false
+      matches += 1
+    } else if (['link_open', 'title', 'href', 'img-src', 'img-title', 'whitespace'].indexOf(t.type) !== -1) {
+      console.log('push')
+      args.push(t)
+    } else {
+      //i-- // we have gone too far, back off one and break
+      break
+    }
+
+    i++
+  }
+
+  // for every l paren find a matching r paren
+  // filter out the white space
+  // 
+  console.log(args, '<< args <<')
+  args
+    .filter(a => ['link_open', 'whitespace'].indexOf(a.type) !== -1)
+         .forEach(a => {
+           console.log(a)
+      res.value[a.type] = a.value
+    })
+
+  console.log(res)
+
+  return {token: res, numTokens: i, error}
+}
+
 const argVal = token => {
   if (PI_PATTERN.test(token.value)) {
     return Math.PI.toString()
@@ -198,6 +261,7 @@ export default function (input) {
     cell: [],
     bean: [],
     error: [],
+    link: [],
     formula: [],
     text: '',
     body: '',
@@ -208,9 +272,14 @@ export default function (input) {
 
   for(let i=0; i < tokens.length; i++){
     let t = tokens[i]
-
+    
     // Capture everything but the folder, todo, done
-    if (t.type === 'formula_open') {
+    if (t.type === 'link_open') {
+      const {token, numTokens, error} = link(tokens.slice(i))
+      
+      i += numTokens
+      t = token
+    } else if (t.type === 'formula_open') {
       const {token, numTokens, error} = formula(tokens.slice(i))
 
       i += numTokens

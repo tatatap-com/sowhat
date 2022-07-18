@@ -213,16 +213,16 @@ The URL regex can be found [here](https://github.com/tatatap-com/sowhat/blob/mas
 Possible scenarios:
 
 ```
-//("url")
-//("url" "name")
-//("url")() <-- invalid
-//()("image-url")
-//()("image-url" "name")
-//("url")("image-url")
-//("url")("image-url" "name")
-//("url" "name")() <-- invalid
-//("url" "name")("image-url")
-//("url" "name")("image-url" "name")
+://("url")
+://("url" "name")
+://("url")() <-- invalid
+://()("image-url")
+://()("image-url" "name")
+://("url")("image-url")
+://("url")("image-url" "name")
+://("url" "name")() <-- invalid
+://("url" "name")("image-url")
+://("url" "name")("image-url" "name")
 
 ```
 

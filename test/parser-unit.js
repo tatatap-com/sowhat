@@ -400,6 +400,45 @@ baz`)
     });
   });
 
+  describe('Links', () => {
+    it('Should find a link without an href only', () => {
+      const result = parse('://("foo") ');
+      expect(result.link.length).to.equal(1);
+    });
+
+    it('Should find a link with an href and title', () => {
+      const result = parse('://("foo" "bar") ');
+      expect(result.link[0].value.href).to.equal("foo");
+      expect(result.link[0].value.title).to.equal("bar");
+    });
+
+    it('Should find a link with an href, title, img-src and img-title', () => {
+      const result = parse('://("foo" "bar")("baz" "qux") ');
+
+      expect(result.link[0].value.href).to.equal("foo");
+      expect(result.link[0].value.title).to.equal("bar");
+      expect(result.link[0].value['img-src']).to.equal("baz");
+      expect(result.link[0].value['img-title']).to.equal("qux");
+    });
+
+    it('Should find a link with an img-src and img-title nothin else', () => {
+      const result = parse('://()("foo" "bar") ');
+
+      expect(result.link[0].value.href).to.equal(null);
+      expect(result.link[0].value.title).to.equal(null);
+      expect(result.link[0].value['img-src']).to.equal("foo");
+      expect(result.link[0].value['img-title']).to.equal("bar");
+    });
+
+    it('Should find a link and stuff before and after', () => {
+      const result = parse('foo ://()() #bar baz');
+
+      expect(result.link[0].value.href).to.equal(null);
+      console.log(result.link[0])
+      expect(result.tag[0].value).to.equal('bar');
+    });
+  });
+
 
   describe('Formulas', () => {
     it('Should find a formula without a name', () => {

@@ -2,6 +2,8 @@ import moo from 'moo'
 
 import formulaStateFactory from './formula-states.js'
 
+import linkState from './link-states.js'
+
 import {
   SYMBOL_PATTERN,
   WS_PATTERN,
@@ -15,6 +17,7 @@ import {
   BEAN_PATTERN,
   URL_PATTERN,
   FORMULA_OPEN_PATTERN,
+  LINK_OPEN_PATTERN,
   LINK_PATTERN,
   PIN_PATTERN,
   TODO_DONE_KW,
@@ -99,6 +102,7 @@ const standard_tokens = {
   }},
 
   url: { match: URL_PATTERN, push: 'url' },
+
   bean: { match: BEAN_PATTERN, push: 'bean', value: (t) => {
     const sign = t.substring(0,1);
     let symbol;
@@ -127,10 +131,15 @@ const standard_tokens = {
     next: 'formula-open'
   },
 
-  link: {
-    match: LINK_PATTERN,
-    push: 'standard'
+  link_open: {
+    match: LINK_OPEN_PATTERN,
+    next: 'link-open'
   },
+
+  /* link: {
+   *   match: LINK_PATTERN,
+   *   push: 'standard'
+   * }, */
 
   word: {
     match: SYMBOL_PATTERN,
@@ -168,10 +177,10 @@ export default moo.states({
       }
     },
 
-    link: {
-      match: LINK_PATTERN,
-      push: 'standard'
-    },
+    /* link: {
+     *   match: LINK_PATTERN,
+     *   push: 'standard'
+     * }, */
 
     folder: {  match: FOLDER_PATTERN, next: 'folder', value: t => {
       if (QUOTED_NAME_PATTERN.test(t)) {
@@ -380,6 +389,7 @@ export default moo.states({
   },
 
   ...formulaStateFactory('', 'standard'),
+  ...linkState(standard_tokens),
 })
 
 
