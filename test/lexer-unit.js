@@ -305,6 +305,51 @@ describe('sowhat lexer', () => {
   })
 
 
+  describe('Links', () => {
+    // formulas
+    it('should be a link', () => {
+      const tokens = getTokens('//()')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link')).to.equal(true)
+    })
+
+    it('should be a link', () => {
+      const tokens = getTokens('//("")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link')).to.equal(true)
+    })
+
+    it('should be a link', () => {
+      const tokens = getTokens('//("" "")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link')).to.equal(true)
+    })
+
+    it('should be a link with an image', () => {
+      const tokens = getTokens('//("" "")()')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link')).to.equal(true)
+    })
+
+    it('should be a link with an image', () => {
+      const tokens = getTokens('//("" "")("")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link')).to.equal(true)
+    })
+
+    it('should be a link with an image', () => {
+      const tokens = getTokens('//("" "")("" "")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link')).to.equal(true)
+    })
+
+    it('should be a link with an image with odd spacing', () => {
+      const tokens = getTokens('//(""    "")   ("""")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link')).to.equal(true)
+    })
+  })
+
   describe('Formulas', () => {
     // formulas
     it('should be a formula', () => {

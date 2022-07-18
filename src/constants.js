@@ -53,6 +53,8 @@ export const CELL_PATTERN = new RegExp('&' + LABEL_PATTERN + '(?::-?' + NUMBER_P
 
 export const MENTION_PATTERN = new RegExp('@' + LIMITED_ASCII_LABEL_PATTERN )
 
+export const LINK_PATTERN = /\/\/\((?:"(?:[^"\\]*(?:\\.[^"\\]*)*?)"\s*){0,2}\)(?:\s*\((?:"(?:[^"\\]*(?:\\.[^"\\]*)*?)"\s*){0,2}\))?/
+
 export const OPERATOR_PATTERN = /[\S]{1,42}/
 
 export const ARG_PATTERN = new RegExp(LABEL_PATTERN + '|-?' + NUMBER_PATTERN_BASE + '|-')
