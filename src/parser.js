@@ -136,6 +136,65 @@ const argVal = token => {
   }
 }
 
+const formula = tokens => {
+  let error
+
+  let res = {
+    type: 'formula',
+    value: {
+      name: null,
+      procedure: null
+    },
+    text: '',
+    offset: tokens[0].offset,
+    line: tokens[0].line,
+    col: tokens[0].col,
+    lineBreaks: 0,
+    error: null
+  }
+  let i = 0
+
+  while (tokens[i] && ['error'].indexOf(tokens[i].type) === -1) {
+    const t = tokens[i]
+    res.text += t.text
+
+    if (t.type === 'arg') {
+      res.value.name = t.value
+    } else if (t.type === 'rparen') {
+      break
+    }
+
+    i++
+  }
+
+  for (i; i < tokens.length; i++) {
+    const t = tokens[i]
+
+    if (t.type === 'error') {
+      res.error = true
+      res.value.procedure = t.value
+      break
+    } else if (t.type === 'lparen') {
+      const {numTokens, token, err} = func(tokens.slice(i))
+      i += numTokens
+
+      res.text += token.text
+      if (err) {
+        res.error = true
+        res.value = err.value
+      }
+      res.value.procedure = token
+      break
+    } else if (t.type === 'rparen') {
+      continue
+    } else {
+      res.text += t.text
+    }
+  }
+
+  return {token: res, numTokens: i, error}
+}
+
 const func = tokens => {
   let res = {
     type: 'func',
@@ -197,64 +256,6 @@ const func = tokens => {
   return {numTokens: i, err: error, token: res}
 }
 
-const formula = tokens => {
-  let error
-
-  let res = {
-    type: 'formula',
-    value: {
-      name: null,
-      procedure: null
-    },
-    text: '',
-    offset: tokens[0].offset,
-    line: tokens[0].line,
-    col: tokens[0].col,
-    lineBreaks: 0,
-    error: null
-  }
-  let i = 0
-
-  while (tokens[i] && ['error'].indexOf(tokens[i].type) === -1) {
-    const t = tokens[i]
-    res.text += t.text
-
-    if (t.type === 'arg') {
-      res.value.name = t.value
-    } else if (t.type === 'rparen') {
-      break
-    }
-
-    i++
-  }
-
-  for (i; i < tokens.length; i++) {
-    const t = tokens[i]
-
-    if (t.type === 'error') {
-      res.error = true
-      res.value.procedure = t.value
-      break
-    } else if (t.type === 'lparen') {
-      const {numTokens, token, err} = func(tokens.slice(i))
-      i += numTokens
-
-      res.text += token.text
-      if (err) {
-        res.error = true
-        res.value = err.value
-      }
-      res.value.procedure = token
-      break
-    } else if (t.type === 'rparen') {
-      continue
-    } else {
-      res.text += t.text
-    }
-  }
-
-  return {token: res, numTokens: i, error}
-}
 
 const reaction = tokens => {
   const reactionMap = {
