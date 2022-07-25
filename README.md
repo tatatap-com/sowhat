@@ -107,7 +107,7 @@ Any text will parse as a valid sowhat record. The elements listed below add mean
 * **[Folders](#folders)**: Describes where to file the record
 * **[Todo/Done](#tododone)**: Indicates whether the record is something todo or something done
 * **[URLs](#urls)**: See the [urlPattern](https://github.com/tatatap-com/sowhat/blob/master/src/urlPattern.js) for the exact Regex
-* **[Links](#links)**: Format to capture a link
+* **[Links](#links)**: Format to capture a link or image or both
 * **[Tags](#tags)**: Standard tagging organizational structure
 * **[Mentions](#mentions)**: Mentions allow tagging of a handle
 * **[Events](#events)**: Just like a tag, but utilizes the date element to indicate that _something_ happened at that time. In addition to marking a moment in time, events can include a continuation notation indicating the event spans a time range ending when a record dated in the future includes an _event close token_
@@ -209,18 +209,19 @@ The URL regex can be found [here](https://github.com/tatatap-com/sowhat/blob/mas
 
 ### Links and Images
 
+Links and images are grouped together because of their often complementary behavior. The sowhat link element allows one to define a plain link/name combo, a link whose content is an image, or just an image.
 
 Possible scenarios:
 
 ```
 ://("url")
 ://("url" "name")
-://("url")() <-- invalid
+://("url")() <-- unnecessary extra parens
 ://()("image-url")
 ://()("image-url" "name")
 ://("url")("image-url")
 ://("url")("image-url" "name")
-://("url" "name")() <-- invalid
+://("url" "name")() <-- invalid unnecessary extra parens
 ://("url" "name")("image-url")
 ://("url" "name")("image-url" "name")
 
