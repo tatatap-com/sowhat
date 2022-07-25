@@ -35,6 +35,7 @@ $$("Cash After Shopping")
   * **[Folders](#folders)**
   * **[Todo/Done](#tododone)**
   * **[URLs](#urls)**
+  * **[Links](#links)**
   * **[Tags](#tags)**
   * **[Mentions](#mentions)**
   * **[Events](#events)**
@@ -106,6 +107,7 @@ Any text will parse as a valid sowhat record. The elements listed below add mean
 * **[Folders](#folders)**: Describes where to file the record
 * **[Todo/Done](#tododone)**: Indicates whether the record is something todo or something done
 * **[URLs](#urls)**: See the [urlPattern](https://github.com/tatatap-com/sowhat/blob/master/src/urlPattern.js) for the exact Regex
+* **[Links](#links)**: Format to capture a link
 * **[Tags](#tags)**: Standard tagging organizational structure
 * **[Mentions](#mentions)**: Mentions allow tagging of a handle
 * **[Events](#events)**: Just like a tag, but utilizes the date element to indicate that _something_ happened at that time. In addition to marking a moment in time, events can include a continuation notation indicating the event spans a time range ending when a record dated in the future includes an _event close token_
@@ -204,6 +206,26 @@ The keywords can be capital or lowercase or a mix, it does not matter: `todo`, `
 URLs identified in the record are parsed into a list for further processing. They can be included anywhere in the record except within another element.
 
 The URL regex can be found [here](https://github.com/tatatap-com/sowhat/blob/master/src/urlPattern.js) 
+
+### Links and Images
+
+
+Possible scenarios:
+
+```
+://("url")
+://("url" "name")
+://("url")() <-- invalid
+://()("image-url")
+://()("image-url" "name")
+://("url")("image-url")
+://("url")("image-url" "name")
+://("url" "name")() <-- invalid
+://("url" "name")("image-url")
+://("url" "name")("image-url" "name")
+
+```
+
 
 ### Tags
 

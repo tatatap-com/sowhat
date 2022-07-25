@@ -53,9 +53,13 @@ export const CELL_PATTERN = new RegExp('&' + LABEL_PATTERN + '(?::-?' + NUMBER_P
 
 export const MENTION_PATTERN = new RegExp('@' + LIMITED_ASCII_LABEL_PATTERN )
 
-export const OPERATOR_PATTERN = /[\S]{1,42}/
+export const LINK_PATTERN = /:\/\/\((?:"(?:[^"\\]*(?:\\.[^"\\]*)*?)"\s*){0,2}\)(?:\s*\((?:"(?:[^"\\]*(?:\\.[^"\\]*)*?)"\s*){0,2}\))?/
 
-export const ARG_PATTERN = new RegExp(LABEL_PATTERN + '|-?' + NUMBER_PATTERN_BASE + '|-')
+export const LINK_OPEN_PATTERN = /:\/\//
+
+export const OPERATOR_PATTERN = /[^\s()]{1,42}/
+
+export const ARG_PATTERN = new RegExp(LABEL_PATTERN + '|-?' + NUMBER_PATTERN_BASE + '|-|\\+|\\*|\\/|\\%|\\^')
 
 export const NUMBER_PATTERN = new RegExp('-?' + NUMBER_PATTERN_BASE)
 

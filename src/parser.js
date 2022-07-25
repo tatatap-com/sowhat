@@ -1,12 +1,198 @@
 import lexer from './states.js'
 import {PI_PATTERN} from './constants.js'
 
+const link = tokens => {
+  let error
+
+  let res = {
+    type: 'link',
+    value: {
+      title: null,
+      href: null,
+      'img-src': null,
+      'img-title': null,
+      error: null
+    },
+    text: '',
+    offset: tokens[0].offset,
+    line: tokens[0].line,
+    col: tokens[0].col,
+    lineBreaks: 0,
+    error: null
+  }
+
+  let i = 0
+
+  // while no error and no tokens other than link tokens
+  let match = false
+
+  res.text = tokens[i].text
+  i++; // NOTE: skip the open token
+
+
+  let tmpText = '';
+  let j = i
+
+  while (tokens[j] && ['lparen', 'space'].indexOf(tokens[i].type) !== -1 && match === false) {
+    const t = tokens[i]
+
+    res.text += t.text
+
+    if (t.type === 'lparen') {
+      match = true
+    }
+
+    i++
+  }
+
+  if (match) {
+    let vals = []
+    while (tokens[i] && ['rparen', 'error'].indexOf(tokens[i].type) === -1) {
+      const t = tokens[i]
+      res.text += t.text
+      vals.push(t)
+      i++
+    }
+
+    vals = vals.filter(v => v.type !== 'space').map(v => v.value)
+
+    const [href, title] = vals
+
+    res.value.title = title || null
+    res.value.href = href || null
+
+    if (tokens[i].type === 'error') {
+      // NOTE: bubbling the error up to be handled by the top level parser
+      i--
+      return {token: res, numTokens: i, error}
+    }
+
+    // NOTE: to account for the rparen we want to skip
+    res.text += tokens[i].text
+
+  } else if (tokens[i].type === 'error') {
+    // NOTE: bubbling the error up to be handled by the top level parser
+    i--
+    return {token: res, numTokens: i, error}
+  }
+
+  match = false
+
+  j = i + 1
+
+  tmpText = ''
+  while (tokens[j] && ['lparen', 'space'].indexOf(tokens[j].type) !== -1 && match === false) {
+    const t = tokens[j]
+    tmpText += t.text
+    if (t.type === 'lparen') {
+      match = true
+    }
+
+    j++
+  }
+
+  if (match) {
+    i = j;
+
+    res.text += tmpText
+    let vals = []
+
+    while (tokens[i] && ['rparen', 'error'].indexOf(tokens[i].type) === -1) {
+      const t = tokens[i]
+      vals.push(t)
+      res.text += t.text
+      i++
+    }
+
+    vals = vals.filter(v => v.type !== 'space').map(v => v.value)
+
+    const [imgSrc, imgTitle] = vals
+
+    res.value['img-title'] = imgTitle || null
+    res.value['img-src'] = imgSrc || null
+
+    if (tokens[i].type === 'error') {
+      // NOTE: bubbling the error up to be handled by the top level parser
+      i--
+      return {token: res, numTokens: i, error}
+    }
+
+    res.text += tokens[i].text
+
+  } else if (tokens[i].type === 'error') {
+    // NOTE: bubbling the error up to be handled by the top level parser
+    i--
+    return {token: res, numTokens: i, error}
+  }
+
+  return {token: res, numTokens: i, error}
+}
+
 const argVal = token => {
   if (PI_PATTERN.test(token.value)) {
     return Math.PI.toString()
   } else {
     return token.value
   }
+}
+
+const formula = tokens => {
+  let error
+
+  let res = {
+    type: 'formula',
+    value: {
+      name: null,
+      procedure: null
+    },
+    text: '',
+    offset: tokens[0].offset,
+    line: tokens[0].line,
+    col: tokens[0].col,
+    lineBreaks: 0,
+    error: null
+  }
+  let i = 0
+
+  while (tokens[i] && ['error'].indexOf(tokens[i].type) === -1) {
+    const t = tokens[i]
+    res.text += t.text
+
+    if (t.type === 'arg') {
+      res.value.name = t.value
+    } else if (t.type === 'rparen') {
+      break
+    }
+
+    i++
+  }
+
+  for (i; i < tokens.length; i++) {
+    const t = tokens[i]
+
+    if (t.type === 'error') {
+      res.error = true
+      res.value.procedure = t.value
+      break
+    } else if (t.type === 'lparen') {
+      const {numTokens, token, err} = func(tokens.slice(i))
+      i += numTokens
+
+      res.text += token.text
+      if (err) {
+        res.error = true
+        res.value = err.value
+      }
+      res.value.procedure = token
+      break
+    } else if (t.type === 'rparen') {
+      continue
+    } else {
+      res.text += t.text
+    }
+  }
+
+  return {token: res, numTokens: i, error}
 }
 
 const func = tokens => {
@@ -70,64 +256,6 @@ const func = tokens => {
   return {numTokens: i, err: error, token: res}
 }
 
-const formula = tokens => {
-  let error
-
-  let res = {
-    type: 'formula',
-    value: {
-      name: null,
-      procedure: null
-    },
-    text: '',
-    offset: tokens[0].offset,
-    line: tokens[0].line,
-    col: tokens[0].col,
-    lineBreaks: 0,
-    error: null
-  }
-  let i = 0
-
-  while (tokens[i] && ['error'].indexOf(tokens[i].type) === -1) {
-    const t = tokens[i]
-    res.text += t.text
-
-    if (t.type === 'arg') {
-      res.value.name = t.value
-    } else if (t.type === 'rparen') {
-      break
-    }
-
-    i++
-  }
-
-  for (i; i < tokens.length; i++) {
-    const t = tokens[i]
-
-    if (t.type === 'error') {
-      res.error = true
-      res.value.procedure = t.value
-      break
-    } else if (t.type === 'lparen') {
-      const {numTokens, token, err} = func(tokens.slice(i))
-      i += numTokens
-
-      res.text += token.text
-      if (err) {
-        res.error = true
-        res.value = err.value
-      }
-      res.value.procedure = token
-      break
-    } else if (t.type === 'rparen') {
-      continue
-    } else {
-      res.text += t.text
-    }
-  }
-
-  return {token: res, numTokens: i, error}
-}
 
 const reaction = tokens => {
   const reactionMap = {
@@ -198,6 +326,7 @@ export default function (input) {
     cell: [],
     bean: [],
     error: [],
+    link: [],
     formula: [],
     text: '',
     body: '',
@@ -210,7 +339,11 @@ export default function (input) {
     let t = tokens[i]
 
     // Capture everything but the folder, todo, done
-    if (t.type === 'formula_open') {
+    if (t.type === 'link_open') {
+      const {token, numTokens, error} = link(tokens.slice(i))
+      i += numTokens
+      t = token
+    } else if (t.type === 'formula_open') {
       const {token, numTokens, error} = formula(tokens.slice(i))
 
       i += numTokens
@@ -258,11 +391,11 @@ export default function (input) {
     }
 
     if (chunk) {
-      res.chunks.push({...tokenFilter(chunk), type: chunk.type})
+      res.chunks.push(Object.assign(tokenFilter(chunk), {type: chunk.type}))
     }
 
     if (chunks[i]) {
-      res.chunks.push({...tokenFilter(chunks[i]), type: chunks[i].type})
+      res.chunks.push(Object.assign(tokenFilter(chunks[i]), {type: chunks[i].type}))
     }
   }
 

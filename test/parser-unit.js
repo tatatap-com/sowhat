@@ -400,6 +400,86 @@ baz`)
     });
   });
 
+  describe('Links', () => {
+
+    it('Should find a link and error', () => {
+      const result = parse('://  a');
+      expect(result.error[0].text).to.equal('a');
+
+      expect(result.text).to.equal('://  a')
+    });
+
+    it('Should find a link and error', () => {
+      const result = parse('://("foo"  a');
+      expect(result.error[0].text).to.equal('a');
+      expect(result.link[0].value.href).to.equal('foo');
+      expect(result.text).to.equal('://("foo"  a')
+    });
+
+    it('Should find a link and error in second bubble', () => {
+      const result = parse('://("foo")(  a');
+      expect(result.error[0].text).to.equal('a');
+      expect(result.link[0].value.href).to.equal('foo');
+      expect(result.text).to.equal('://("foo")(  a')
+    });
+
+    it('Should find a link and error in second bubble, second param', () => {
+      const result = parse('://("foo")("bar"  a)');
+      expect(result.error[0].text).to.equal('a)');
+      expect(result.link[0].value.href).to.equal('foo');
+      expect(result.text).to.equal('://("foo")("bar"  a)')
+    });
+
+    it('Should find a link without an href only', () => {
+      const result = parse('://("foo") ');
+      expect(result.link.length).to.equal(1);
+    });
+
+    it('Should find a link with an href and title', () => {
+      const result = parse('://("foo" "bar") a');
+      expect(result.link[0].value.href).to.equal("foo");
+      expect(result.link[0].value.title).to.equal("bar");
+    });
+
+    it('Should find a link with an href, title, img-src and img-title', () => {
+      const result = parse('aa ://("foo" "bar")("baz" "qux") ');
+      expect(result.link[0].value.href).to.equal("foo");
+      expect(result.link[0].value.title).to.equal("bar");
+      expect(result.link[0].value['img-src']).to.equal("baz");
+      expect(result.link[0].value['img-title']).to.equal("qux");
+      expect(result.text).to.equal('aa ://("foo" "bar")("baz" "qux") ')
+    });
+
+
+    it('Should find a link with an href, title, img-src and img-title', () => {
+      const result = parse('aa ://("foo" "bar")("baz" "qux" aa ');
+
+      expect(result.error[0].text).to.equal('aa');
+
+      expect(result.link[0].value.href).to.equal("foo");
+      expect(result.link[0].value.title).to.equal("bar");
+      expect(result.link[0].value['img-src']).to.equal("baz");
+      expect(result.link[0].value['img-title']).to.equal("qux");
+
+      expect(result.text).to.equal('aa ://("foo" "bar")("baz" "qux" aa ')
+    });
+
+    it('Should find a link with an img-src and img-title nothin else', () => {
+      const result = parse('://()("foo" "bar") ');
+      expect(result.link[0].value.href).to.equal(null);
+      expect(result.link[0].value.title).to.equal(null);
+      expect(result.link[0].value['img-src']).to.equal("foo");
+      expect(result.link[0].value['img-title']).to.equal("bar");
+    });
+
+    it('Should find a link and stuff before and after', () => {
+      const result = parse('foo ://()() #bar baz');
+
+      expect(result.link[0].value.href).to.equal(null);
+      expect(result.tag[0].value).to.equal('bar');
+    });
+  });
+
 
   describe('Formulas', () => {
     it('Should find a formula without a name', () => {
@@ -463,6 +543,75 @@ baz`)
         args: [
           '$'
         ]
+      };
+
+      expect(result.formula[0].value.procedure).to.deep.equal(proc);
+      expect(result.formula.length).to.equal(1);
+    });
+
+
+    it('Should find a formula with func with no args', () => {
+      const result = parse('$$()(BEAN)');
+
+      const proc = {
+        operator: 'BEAN',
+        text: '(BEAN)',
+        error: null,
+        col: 5,
+        line: 1,
+        lineBreaks: 0,
+        offset: 4,
+        type: 'func',
+        args: []
+      };
+
+      expect(result.formula[0].value.procedure).to.deep.equal(proc);
+      expect(result.formula.length).to.equal(1);
+    });
+
+    it('Should find a formula with func with math symbols mixed in the args', () => {
+      const result = parse('$$()(= -1 + 1 ^ 3)');
+
+      const proc = {
+        operator: '=',
+        text: '(= -1 + 1 ^ 3)',
+        error: null,
+        col: 5,
+        line: 1,
+        lineBreaks: 0,
+        offset: 4,
+        type: 'func',
+        args: ['-1', '+', '1', '^', '3']
+      };
+
+      expect(result.formula[0].value.procedure).to.deep.equal(proc);
+      expect(result.formula.length).to.equal(1);
+    });
+
+    it('Should find a formula with func with math symbols mixed in the args and nested funcs', () => {
+      const result = parse('$$()(= -1 + 1 ^ 3 +(BEAN)/ 5)');
+
+      const proc = {
+        operator: '=',
+        text: '(= -1 + 1 ^ 3 +(BEAN)/ 5)',
+        error: null,
+        col: 5,
+        line: 1,
+        lineBreaks: 0,
+        offset: 4,
+        type: 'func',
+        args: ['-1', '+', '1', '^', '3', '+', {
+          args: [],
+          col: 20,
+          error: null,
+          line: 1,
+          lineBreaks: 0,
+          offset: 19,
+          operator: 'BEAN',
+          text: '(BEAN)',
+          type: 'func'
+
+        }, '/', '5']
       };
 
       expect(result.formula[0].value.procedure).to.deep.equal(proc);

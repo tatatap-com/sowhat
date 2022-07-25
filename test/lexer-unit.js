@@ -305,6 +305,67 @@ describe('sowhat lexer', () => {
   })
 
 
+  describe('Links', () => {
+    // formulas
+    it('should be a link', () => {
+      const tokens = getTokens('://()')
+
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+    })
+
+    it('should be a link', () => {
+      const tokens = getTokens('://("")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+    })
+
+    it('should be a link', () => {
+      const tokens = getTokens('://("" "")')
+
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+    })
+
+    it('should be a link with an image', () => {
+      const tokens = getTokens('://("" "")()')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+    })
+
+    it('should be a link with an image', () => {
+      const tokens = getTokens('://("" "")("")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+    })
+
+    it('should be a link with an image', () => {
+      const tokens = getTokens('://("" "")("" "")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+    })
+
+    it('should be a link with an image with odd spacing', () => {
+      const tokens = getTokens('://(""    "")   ("""")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+    })
+
+    it('should be a link with escaped quotes', () => {
+      const tokens = getTokens('://("\\"foo\\" bar"    "baz\\"")   ("""")')
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+    })
+
+    it('should be a link and a tag', () => {
+      const tokens = getTokens('://("foo"    "bar") #baz   ("""")')
+
+      expect(tokens.some(i => i.type === 'error')).to.equal(false)
+      expect(tokens.some(t => t.type === 'link_open')).to.equal(true)
+      expect(tokens.some(t => t.type === 'tag')).to.equal(true)
+    })
+  })
+
   describe('Formulas', () => {
     // formulas
     it('should be a formula', () => {
