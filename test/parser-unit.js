@@ -549,6 +549,75 @@ baz`)
       expect(result.formula.length).to.equal(1);
     });
 
+
+    it('Should find a formula with func with no args', () => {
+      const result = parse('$$()(BEAN)');
+
+      const proc = {
+        operator: 'BEAN',
+        text: '(BEAN)',
+        error: null,
+        col: 5,
+        line: 1,
+        lineBreaks: 0,
+        offset: 4,
+        type: 'func',
+        args: []
+      };
+
+      expect(result.formula[0].value.procedure).to.deep.equal(proc);
+      expect(result.formula.length).to.equal(1);
+    });
+
+    it('Should find a formula with func with math symbols mixed in the args', () => {
+      const result = parse('$$()(= -1 + 1 ^ 3)');
+
+      const proc = {
+        operator: '=',
+        text: '(= -1 + 1 ^ 3)',
+        error: null,
+        col: 5,
+        line: 1,
+        lineBreaks: 0,
+        offset: 4,
+        type: 'func',
+        args: ['-1', '+', '1', '^', '3']
+      };
+
+      expect(result.formula[0].value.procedure).to.deep.equal(proc);
+      expect(result.formula.length).to.equal(1);
+    });
+
+    it('Should find a formula with func with math symbols mixed in the args and nested funcs', () => {
+      const result = parse('$$()(= -1 + 1 ^ 3 +(BEAN)/ 5)');
+
+      const proc = {
+        operator: '=',
+        text: '(= -1 + 1 ^ 3 +(BEAN)/ 5)',
+        error: null,
+        col: 5,
+        line: 1,
+        lineBreaks: 0,
+        offset: 4,
+        type: 'func',
+        args: ['-1', '+', '1', '^', '3', '+', {
+          args: [],
+          col: 20,
+          error: null,
+          line: 1,
+          lineBreaks: 0,
+          offset: 19,
+          operator: 'BEAN',
+          text: '(BEAN)',
+          type: 'func'
+
+        }, '/', '5']
+      };
+
+      expect(result.formula[0].value.procedure).to.deep.equal(proc);
+      expect(result.formula.length).to.equal(1);
+    });
+
     it('Should find 2 formulas', () => {
       const result = parse('$$()(+ 1 1) $$()(+ 2 2)');
 

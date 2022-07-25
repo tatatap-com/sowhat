@@ -57,9 +57,9 @@ export const LINK_PATTERN = /:\/\/\((?:"(?:[^"\\]*(?:\\.[^"\\]*)*?)"\s*){0,2}\)(
 
 export const LINK_OPEN_PATTERN = /:\/\//
 
-export const OPERATOR_PATTERN = /[\S]{1,42}/
+export const OPERATOR_PATTERN = /[^\s()]{1,42}/
 
-export const ARG_PATTERN = new RegExp(LABEL_PATTERN + '|-?' + NUMBER_PATTERN_BASE + '|-')
+export const ARG_PATTERN = new RegExp(LABEL_PATTERN + '|-?' + NUMBER_PATTERN_BASE + '|-|\\+|\\*|\\/|\\%|\\^')
 
 export const NUMBER_PATTERN = new RegExp('-?' + NUMBER_PATTERN_BASE)
 
