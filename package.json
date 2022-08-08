@@ -1,7 +1,7 @@
 {
     "name": "@tatatap-com/sowhat",
     "description": "Anything goes, organizational and utility function notation parser.",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "license": "MIT",
     "type": "module",
     "engines": {
@@ -21,7 +21,11 @@
         "rollup": "^2.75.7",
         "rollup-plugin-terser": "^7.0.2"
     },
-    "exports": "./dist/sowhat.js",
+    "exports": {
+        ".": "./dist/sowhat.js",
+        "./cjs": "./dist/sowhat.cjs"
+
+    },
     "directories": {
         "test": "test"
     },
