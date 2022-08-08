@@ -6,10 +6,16 @@ export default {
   input: 'src/index.js',
   output: [
     {
-      file: './dist/sowhat.js',
+      file: './dist/sowhat.cjs',
       format: 'cjs'
     },
-    { file: "./dist/sowhat.min.js", format: "cjs", plugins: [terser(
+
+    {
+      file: './dist/sowhat.js',
+      format: 'es'
+    },
+
+    { file: "./dist/sowhat.min.cjs", format: "cjs", plugins: [terser(
       {
         format: {
           comments: function (node, comment) {
@@ -23,6 +29,21 @@ export default {
         }
       }
     )] },
+
+    { file: "./dist/sowhat.min.js", format: "es", plugins: [terser(
+      {
+        format: {
+          comments: function (node, comment) {
+            const text = comment.value;
+            const type = comment.type;
+            if (type == "comment2") {
+              // multiline comment
+              return /@preserve|@license|@cc_on/i.test(text);
+            }
+          }
+        }
+      }
+    )] }
   ],
 
   plugins: [commonjs(), nodeResolve()]
