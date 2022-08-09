@@ -402,6 +402,15 @@ baz`)
 
   describe('Links', () => {
 
+    it('Should find a link open and nothing else', () => {
+      const result = parse('://');
+
+      expect(result.error.length).to.equal(0);
+
+      expect(result.text).to.equal('://')
+    });
+
+
     it('Should find a link and error', () => {
       const result = parse('://  a');
       expect(result.error[0].text).to.equal('a');

@@ -70,7 +70,7 @@ const link = tokens => {
     // NOTE: to account for the rparen we want to skip
     res.text += tokens[i].text
 
-  } else if (tokens[i].type === 'error') {
+  } else if (tokens[i] && tokens[i].type === 'error') {
     // NOTE: bubbling the error up to be handled by the top level parser
     i--
     return {token: res, numTokens: i, error}
@@ -119,7 +119,7 @@ const link = tokens => {
 
     res.text += tokens[i].text
 
-  } else if (tokens[i].type === 'error') {
+  } else if (tokens[i] && tokens[i].type === 'error') {
     // NOTE: bubbling the error up to be handled by the top level parser
     i--
     return {token: res, numTokens: i, error}
